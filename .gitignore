@@ -1,9 +1,16 @@
+/target
+/local
+/data
+
 *.class
 # Mobile Tools for Java (J2ME)
+/.*
 .mtj.tmp/
-*.iml
-.idea/
-target/
+/nbproject
+/*.ipr
+/*.iws
+/*.iml
+
 # Package Files #
 *.jar
 *.war
