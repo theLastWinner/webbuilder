@@ -1,9 +1,8 @@
 package org.webbuilder.web.core.utils;
 
-import org.webbuilder.web.po.user.User;
-import com.sun.xml.internal.ws.client.ResponseContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.webbuilder.web.po.user.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
