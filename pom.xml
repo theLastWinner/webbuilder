@@ -10,8 +10,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>bpm</module>
-        <module>core</module>
-        <module>utils</module>
+        <module>wb-bpm</module>
+        <module>wb-core</module>
+        <module>wb-utils</module>
     </modules>
 </project>
