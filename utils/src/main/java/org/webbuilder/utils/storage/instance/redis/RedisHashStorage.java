@@ -113,14 +113,14 @@ public class RedisHashStorage<K, V> extends RedisStorage<K, V> {
     }
 
     @Override
-    public Set<String> keySet(KeyFilter filter) {
-        Set<String> newSet = new LinkedHashSet<>();
+    public Set<K> keySet(KeyFilter filter) {
+        Set<K> newSet = new LinkedHashSet<>();
         try (ShardedJedis jedis = getResource()) {
             Set<String> keys = jedis.hkeys(getName());
             for (String key : keys) {
                 if (filter.isOver()) break;
                 if (filter.each(key)) {
-                    newSet.add(key);
+                    newSet.add((K)key);
                 }
             }
             return newSet;

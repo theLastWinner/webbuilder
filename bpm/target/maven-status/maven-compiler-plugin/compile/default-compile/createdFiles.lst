@@ -1,0 +1,11 @@
+org\webbuilder\bpm\pojo\bpm\TaskInfo.class
+org\webbuilder\bpm\controller\bpm\BpmProcessController.class
+org\webbuilder\bpm\service\bpm\BpmProcessService.class
+org\activiti\explorer\rest\ExplorerRestApplication.class
+org\webbuilder\bpm\controller\bpm\BpmModelController.class
+org\webbuilder\bpm\po\bpm\WorkFlowFormEntity.class
+org\webbuilder\bpm\service\bpm\BpmModelService.class
+org\webbuilder\bpm\cache\definition\ProcessDefinitionCache.class
+org\webbuilder\bpm\service\bpm\CustomGroupEntityManagerFactory.class
+org\webbuilder\bpm\service\bpm\BpmTaskService.class
+org\webbuilder\bpm\service\bpm\CustomGroupEntityManager.class

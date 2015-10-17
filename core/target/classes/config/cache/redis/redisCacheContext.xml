@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
+
+    <!--连接池配置-->
+    <bean id="redisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="${redis.pool.maxIdle}"/>
+        <property name="maxWaitMillis" value="${redis.pool.maxWaitMillis}"/>
+        <property name="maxTotal" value="${redis.pool.maxTotal}"/>
+    </bean>
+
+    <bean id="redisPool" class="redis.clients.jedis.ShardedJedisPool">
+        <constructor-arg index="0" name="poolConfig" ref="redisPoolConfig"/>
+        <constructor-arg index="1" name="shards">
+            <list>
+                <value>http://userInfo:${redis.password}@${redis.host}:${redis.port}/${redis.database}</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <!--注册redis驱动-->
+    <bean id="redisDriver" class="org.webbuilder.utils.storage.driver.redis.RedisStorageDriver" init-method="init">
+        <property name="name" value="${redis.name}"/>
+        <property name="pool" ref="redisPool"/>
+        <!--使用2进制序列化与反序列化。如果不注入此属性默认使用的是json方式(存储的对象无序实现Serializable接口)-->
+        <property name="defaultParserClass" value="org.webbuilder.utils.storage.instance.parser.ByteStorageParser"/>
+        <!--使用redis的hash方式实现对象的缓存存储（默认）-->
+        <property name="defaultStorageClass" value="org.webbuilder.utils.storage.instance.redis.RedisHashStorage"/>
+    </bean>
+    <!--redis 消息队列驱动-->
+    <bean id="queueDriver" class="org.webbuilder.utils.storage.driver.redis.RedisStorageDriver" init-method="init">
+        <property name="name" value="redis-queue"/>
+        <property name="pool" ref="redisPool"/>
+        <!--使用2进制序列化与反序列化。如果不注入此属性默认使用的是json方式(存储的对象无序实现Serializable接口)-->
+        <property name="defaultParserClass" value="org.webbuilder.utils.storage.instance.parser.ByteStorageParser"/>
+        <!--使用redis的hash方式实现对象的缓存存储（默认）-->
+        <property name="defaultStorageClass" value="org.webbuilder.utils.storage.instance.redis.RedisQueueStorage"/>
+    </bean>
+
+
+    <!--httpSession管理，存放session的redis DB应该只用于session维护，避免其他缓存驱动使用此DB-->
+    <bean id="httpSessionRedisPool" class="redis.clients.jedis.ShardedJedisPool">
+        <constructor-arg index="0" name="poolConfig" ref="redisPoolConfig"/>
+        <constructor-arg index="1" name="shards" >
+            <list>
+                <!--此链接与tomcat session共享中配置的一样-->
+                <value>http://userInfo:${redis.password}@${redis.host}:${redis.port}/${redis.http.session.database}</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="httpSessionRedisDriver" class="org.webbuilder.utils.storage.driver.redis.RedisStorageDriver" init-method="init">
+        <property name="name" value="redis-httpSession"/>
+        <property name="pool" ref="httpSessionRedisPool"/>
+        <property name="defaultParserClass" value="org.webbuilder.utils.storage.instance.parser.ByteStorageParser"/>
+        <property name="defaultStorageClass" value="org.webbuilder.utils.storage.instance.redis.RedisCommonStorage"/>
+    </bean>
+    <!--配置sessionManager，使用httpSessionRedisDriver作为session管理-->
+    <bean name="httpSessionManager" class="org.webbuilder.web.core.utils.http.session.impl.StorageHttpSessionManager">
+        <property name="driver" ref="httpSessionRedisDriver"/>
+    </bean>
+
+    <!--对spring cache的支持-->
+    <bean id="cacheManager" class="org.webbuilder.web.core.cache.CacheManager">
+        <property name="driver" ref="redisDriver"/>
+    </bean>
+
+    <!--缓存注解支持,在需要缓存的service方法中，注解 @Cacheable 或者@CacheEvict-->
+    <bean id="keyGenerator" class="org.webbuilder.web.core.cache.CommonKeyGenerator">
+        <!--key 是否进行编码 支持MD5,HASH-->
+        <property name="keyEncodeType" value="MD5"></property>
+    </bean>
+
+    <cache:annotation-driven cache-manager="cacheManager"/>
+
+</beans>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- logback 日志的配置文件 -->
+<configuration>
+    <!-- 控制台输出日志 -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} > %-5level %logger{35} - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 自定义输出日志 -->
+    <appender name="Custom" class="org.webbuilder.web.core.logger.LoggerAppenderAdapter">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} > %-5level %logger{35} - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 日志输出 到文件-->
+    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/log/logger/%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>270</maxHistory><!--日志最大保存时间-->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} > %-5level %logger{35} - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--访问日志-->
+    <appender name="Accesslog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/log/access/%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <maxHistory>270</maxHistory><!--日志最大保存时间-->
+        </rollingPolicy>
+        <encoder>
+            <pattern>%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--访问日志 服务-->
+    <logger name="org.webbuilder.web.core.logger.LogBackLoggerService" level="ON">
+        <appender-ref ref="Accesslog"/>
+        <appender-ref ref="Custom"/>
+    </logger>
+    <logger name="org.activiti" level="ERROR">
+        <appender-ref ref="Console"/>
+    </logger>
+    <logger name="org.springframework.jdbc.datasource" level="ERROR">
+        <appender-ref ref="Console"/>
+    </logger>
+    <logger name="org.apache.ibatis.transaction.managed" level="ERROR">
+        <appender-ref ref="Console"/>
+    </logger>
+
+
+    <root level="ON">
+        <appender-ref ref="Console"/>
+        <!--
+        <appender-ref ref="DB" />
+        <appender-ref ref="File" />
+         -->
+    </root>
+</configuration>

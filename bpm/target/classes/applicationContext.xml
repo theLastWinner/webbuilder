@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation=" http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!-- 引入配置文件 -->
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:config/**/*.properties</value>
+            </list>
+        </property>
+    </bean>
+    <!--导入缓存配置，这里使用redis缓存策略-->
+    <import resource="classpath:config/cache/redis/*Context.xml"></import>
+    <!-- 导入多数据源配置-->
+    <import resource="classpath:config/dataSource/dataSource-*.xml"></import>
+    <!-- 多项目自动关联-->
+    <import resource="classpath:config/spring/applicationContext-*.xml"></import>
+    <!--工作流支持-->
+    <import resource="classpath:config/bpm/**/spring-activiti.xml"></import>
+</beans>

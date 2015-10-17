@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * Created by 浩 on 2015-6-13.
  */
-public class PropertiesStorage<K extends String, V extends String> extends Storage<K, V> {
+public class PropertiesStorage extends Storage<String, String> {
 
     private Properties properties;
 
@@ -30,30 +30,30 @@ public class PropertiesStorage<K extends String, V extends String> extends Stora
     }
 
     @Override
-    public Set<K> keySet() {
+    public Set<String> keySet() {
         return (Set) properties.keySet();
     }
 
     @Override
-    public List<V> find(Finder<K, V> finder) {
-        Map<K, V> res = new HashMap();
+    public List<String> find(Finder<String, String> finder) {
+        Map<String, String> res = new HashMap();
         int count = 0;
         for (Map.Entry kvEntry : properties.entrySet()) {
             if (finder.isOver())
                 break;
-            if (finder.each(++count, (K) kvEntry.getKey(), (V) kvEntry.getValue())) {
-                res.put((K) kvEntry.getKey(), (V) kvEntry.getValue());
+            if (finder.each(++count,   (String)kvEntry.getKey(), (String) kvEntry.getValue())) {
+                res.put((String) kvEntry.getKey(), (String) kvEntry.getValue());
             }
         }
-        List<V> data = (List) new LinkedList<>(res.values());
+        List<String> data = (List) new LinkedList<>(res.values());
         return data;
     }
 
     @Override
-    public V get(K key) {
-        V val = (V) properties.get(key);
+    public String get(String key) {
+        String val = (String) properties.get(key);
         if (val == null) {
-            for (StorageListener<K, V> e : getListeners()) {
+            for (StorageListener<String, String> e : getListeners()) {
                 val = e.onNotFoundVal(key);
                 if (logger.isInfoEnabled())
                     logger.info(getName() + " key:" + key + " not found! do event!");
@@ -68,13 +68,13 @@ public class PropertiesStorage<K extends String, V extends String> extends Stora
     }
 
     @Override
-    public boolean put(K key, V val) {
+    public boolean put(String key, String val) {
         properties.put(key, val);
         return true;
     }
 
     @Override
-    public boolean remove(K key) {
+    public boolean remove(String key) {
         properties.remove(key);
         return true;
     }

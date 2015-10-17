@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * Created by 浩 on 2015-08-24 0024.
  */
-public class RedisCommonStorage extends RedisStorage {
+public class RedisCommonStorage<K, V>  extends RedisStorage<K, V> {
 
     /**
      * 根据key获取存储内容
@@ -21,7 +21,7 @@ public class RedisCommonStorage extends RedisStorage {
      * @return 存储内容
      */
     @Override
-    public Object get(Object key) {
+    public V get(K key) {
         byte[] n_key = String.valueOf(key).getBytes();
         try (ShardedJedis jedis = getResource()) {
             return getParser().deserialize(String.valueOf(key), jedis.get(n_key));
@@ -29,7 +29,7 @@ public class RedisCommonStorage extends RedisStorage {
     }
 
     @Override
-    public boolean put(Object key, Object val, long timeout) {
+    public boolean put(K key, V val, long timeout) {
         byte[] n_key = String.valueOf(key).getBytes();
         try (ShardedJedis jedis = getResource()) {
             jedis.set(n_key, getParser().serialize(String.valueOf(key), val));
@@ -46,7 +46,7 @@ public class RedisCommonStorage extends RedisStorage {
      * @return 是否存储成功
      */
     @Override
-    public boolean put(Object key, Object val) {
+    public boolean put(K key, V val) {
         byte[] n_key = String.valueOf(key).getBytes();
         try (ShardedJedis jedis = getResource()) {
             jedis.set(n_key, getParser().serialize(String.valueOf(key), val));
@@ -61,7 +61,7 @@ public class RedisCommonStorage extends RedisStorage {
      * @return 是否删除成功
      */
     @Override
-    public boolean remove(Object key) {
+    public boolean remove(K key) {
         byte[] n_key = String.valueOf(key).getBytes();
         try (ShardedJedis jedis = getResource()) {
             jedis.del(n_key);
@@ -86,15 +86,15 @@ public class RedisCommonStorage extends RedisStorage {
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(K key) {
         try (ShardedJedis jedis = getResource()) {
             return jedis.exists(String.valueOf(key));
         }
     }
 
     @Override
-    public Set<String> keySet(final KeyFilter filter) {
-        final Set<String> keys = new LinkedHashSet<>();
+    public Set<K> keySet(final KeyFilter filter) {
+        final Set<K> keys = new LinkedHashSet<>();
         try (ShardedJedis jedis = getResource()) {
             for (Jedis jedis1 : jedis.getAllShards()) {
                 if (filter.isOver()) break;
@@ -109,7 +109,7 @@ public class RedisCommonStorage extends RedisStorage {
                         if (filter.isOver()) over();
                         String skey = new String(key);
                         if (filter.each(skey)) {
-                            keys.add(skey);
+                            keys.add((K)skey);
                         }
                     }
                 });
@@ -119,11 +119,11 @@ public class RedisCommonStorage extends RedisStorage {
     }
 
     @Override
-    public Set<String> keySet() {
-        Set<String> keys = new HashSet<>();
+    public Set<K> keySet() {
+        Set<K> keys = new HashSet<>();
         try (ShardedJedis jedis = getResource()) {
             for (Jedis jedis1 : jedis.getAllShards()) {
-                keys.addAll(jedis1.keys("*"));
+                keys.addAll((Collection<? extends K>) jedis1.keys("*"));
             }
         }
         return keys;
@@ -159,6 +159,7 @@ public class RedisCommonStorage extends RedisStorage {
             //扫描key
             keySet(new KeyFilter<String>() {
                 int count = 0;
+
                 @Override
                 public boolean each(String key) {
                     if (finder.isOver()) over();//退出扫描
