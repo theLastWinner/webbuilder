@@ -18,7 +18,7 @@ public class SqlSessionFactoryBeanV2 extends SqlSessionFactoryBean {
     public void setTypeAliasesPackage(String typeAliasesPackage) {
         if (typeAliasesPackage != null) {
             String[] environment = StringUtils.tokenizeToStringArray(typeAliasesPackage, ",; \t\n");
-            Set<Class> classes = new HashSet<>();
+            Set<Class<?>> classes = new HashSet<>();
             for (String mapperLocation : environment) {
                 classes.addAll(find(mapperLocation));
             }
@@ -30,9 +30,9 @@ public class SqlSessionFactoryBeanV2 extends SqlSessionFactoryBean {
         System.out.println(resource);
     }
 
-    public Set<Class> find(String packageName) {
+    public Set<Class<?>> find(String packageName) {
         String path = packageName.replace('.', '/');
-        Set<Class> classess = new LinkedHashSet<>();
+        Set<Class<?>> classess = new LinkedHashSet<>();
         try {
             List ioe = VFS.getInstance().list(path);
             Iterator i$ = ioe.iterator();

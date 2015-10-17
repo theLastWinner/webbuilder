@@ -12,5 +12,5 @@ import java.lang.annotation.*;
 public @interface JsonParam {
     String value() default "";
 
-    Class type() default Object.class;
+    Class<?> type() default Object.class;
 }

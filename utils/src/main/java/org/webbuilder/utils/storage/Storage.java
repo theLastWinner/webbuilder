@@ -120,7 +120,7 @@ public abstract class Storage<K, V> implements Serializable {
     public List<V> get() {
         return find(new Finder<K, V>() {
             @Override
-            public boolean each(int index,K key, V val) {
+            public boolean each(int index, K key, V val) {
                 return true;
             }
         });
@@ -159,7 +159,7 @@ public abstract class Storage<K, V> implements Serializable {
                 @Override
                 public void run() {
                     if (logger.isDebugEnabled())
-                        logger.debug(getName() + " key:" + key + " is timeout(" + timeout + "s),execute remove!");
+                        logger.debug(String.format("%s key: %s is timeout (%s),execute remove!", getName(), key, timeout));
                     remove(key);
                 }
             }, timeout, TimeUnit.MINUTES);

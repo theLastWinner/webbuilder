@@ -89,7 +89,7 @@ public class BpmProcessService {
                                          Map<String, Object> variables) throws Exception {
         logger.debug("start flow ", work_flow_key);
         Form form = customFormService.getForm(formId);
-        if (form == null) {
+        if (null==form) {
             throw new BusinessException(String.format("不存在此表单:%d", formId));
         }
         formEntity.setU_id(GenericPo.createUID());//创建主键

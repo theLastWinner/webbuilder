@@ -29,16 +29,6 @@ import java.util.List;
  */
 public class Word2Html {
 
-    public static void main(String argv[]) {
-        try (FileInputStream html = new FileInputStream("D:\\doc2html\\1.html");
-             FileOutputStream doc = new FileOutputStream("D:\\doc2html\\1.doc")
-        ) {
-            html2doc(html, doc);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void writeFile(String content, String path) {
         FileOutputStream fos = null;
         BufferedWriter bw = null;

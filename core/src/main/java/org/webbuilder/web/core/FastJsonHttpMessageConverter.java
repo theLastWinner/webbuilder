@@ -37,7 +37,7 @@ public class FastJsonHttpMessageConverter extends AbstractHttpMessageConverter<O
         super(new MediaType[]{new MediaType("application", "json", UTF8), new MediaType("application", "*+json", UTF8)});
         this.charset = UTF8;
         this.features = new SerializerFeature[0];
-        instance = this;
+        FastJsonHttpMessageConverter.instance = this;
     }
 
     protected boolean supports(Class<?> clazz) {

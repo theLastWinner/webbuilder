@@ -57,7 +57,7 @@
     <bean id="sqlSessionFactory" class="org.webbuilder.web.core.SqlSessionFactoryBeanV2"
           p:dataSource-ref="dataSource"
           p:configLocation="classpath:config/mybatis/mybatis-config-core.xml"
-          p:mapperLocations="classpath*:com/cqth/**/dao/**/mapper/${core.dialect}/*Mapper.xml"
+          p:mapperLocations="classpath*:org/webbuilder/**/dao/**/mapper/${core.dialect}/*Mapper.xml"
           p:typeAliasesPackage="${core.typeAliasesPackage}"/>
 
     <!-- spring与mybatis整合配置，扫描所有dao -->

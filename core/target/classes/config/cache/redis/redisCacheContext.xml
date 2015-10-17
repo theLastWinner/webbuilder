@@ -77,4 +77,8 @@
 
     <cache:annotation-driven cache-manager="cacheManager"/>
 
+    <bean id="storageService" class="org.webbuilder.web.service.storage.StorageService">
+        <property name="default_name" value="${storage.default.name}"/>
+    </bean>
+
 </beans>
