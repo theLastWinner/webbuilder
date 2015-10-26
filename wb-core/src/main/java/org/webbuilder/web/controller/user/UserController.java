@@ -63,8 +63,8 @@ public class UserController extends GenericController<User, String> {
 
     @Override
     @AccessLogger("修改用户")
-    public Object update(@PathVariable("id") String id, @RequestBody User object) {
-        return super.update(id, object);
+    public Object update(@PathVariable("id") String id, @RequestBody User data) {
+        return super.update(id, data);
     }
 
     @Override

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head lang="cn">
+    <meta charset="UTF-8">
+    <title>表单设计器v2.0</title>
+    <style>
+        .right {
+            width: 80%;
+            height: auto;
+            float: right;
+        }
+
+        #form {
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <h1 align="center">表单设计器</h1>
+
+    <div id="form">
+        <div>
+            <h2 align="center">表单属性</h2>
+            <table id="formInfo">
+                <tr>
+                    <td align="right" style="width: 80px">表单id:</td>
+                    <td><input name="u_id" required="true" class="mini-textbox"/></td>
+                </tr>
+                <tr>
+                    <td align="right" style="width: 80px">表单名称:</td>
+                    <td><input name="name" required="true" class="mini-textbox"/></td>
+                </tr>
+                <tr>
+                    <td align="right" style="width: 80px">数据库类型:</td>
+                    <td><input name="db_type" required="true" value="oracle" text-field="id" class="mini-combobox" data="db_type"/></td>
+                </tr>
+                <tr>
+                    <td align="right" style="width: 80px">数据库名:</td>
+                    <td><input name="db_name" required="true" class="mini-textbox"/></td>
+                </tr>
+                <tr>
+                    <td align="right" style="width: 80px">session名称:</td>
+                    <td><input name="session_name" value="sqlSession" required="true" class="mini-textbox"/></td>
+                </tr>
+                <tr>
+                    <td align="right" style="width: 80px">数据库表名:</td>
+                    <td><input name="table_name" required="true" class="mini-textbox"/></td>
+                </tr>
+                <tr>
+                    <td align="right">表关联配置:</td>
+                    <td><input name="foreigns" emptyText="user_info[user_id=id] 或者 plan_info[creator_id=user.id]"
+                               class="mini-textarea"/></td>
+                </tr>
+                <tr>
+                    <td align="right" style="width: 80px">自动维护:</td>
+                    <td><input name="auto_alter" value="true" class="mini-checkboxlist" data="[{'id':true,text:'是'}]"/></td>
+                </tr>
+                <tr>
+                    <td align="right">备注:</td>
+                    <td><input name="remark" class="mini-textarea"/></td>
+                </tr>
+            </table>
+        </div>
+        <div id="fieldInfo"></div>
+    </div>
+    <div class="right">
+        <script id="designer"></script>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript" charset="utf-8" src="../../../resources/boot.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../miniui/root.js"></script>
+
+<script type="text/javascript" charset="utf-8" src="../../ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../ueditor/ueditor.all.min.js"></script>
+<!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+<script type="text/javascript" charset="utf-8" src="../../ueditor/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript">
+    var db_type = [{id: 'mysql'}, {id: 'oracle'}]
+    var typeMapper = {
+        oracle: [
+            {id: 'string', dataType: 'varchar2'},
+            {id: 'int', dataType: 'number(38,0)'},
+            {id: 'double', dataType: 'number(38,2)'},
+            {id: 'date', dataType: 'date'}
+        ],
+        mysql: [
+            {id: 'string', dataType: 'varchar'},
+            {id: 'int', dataType: 'int'},
+            {id: 'double', dataType: 'double'},
+            {id: 'date', dataType: 'datetime'}
+        ]
+    };
+    var contrl_list = null;
+    var javaType = typeMapper.oracle;
+
+    var id = null;
+
+    var designer = null;
+    var ue = null;
+    var $ = null;
+    var request = null;
+    seajs.use(["jquery", "designer", "request"], function (jQuery, des, req) {
+        request = req;
+        contrl_list = des.contrl_list;
+        $ = jQuery;
+        designer = des;
+        ue = designer.initEditor("designer");
+        ue.ready(function () {
+            id = request.params.id;
+            loadData();
+        });
+        designer.selectData = function (data) {
+            console.log(data);
+            new mini.Form("#fieldInfo").setData(data);
+        };
+        designer.onSelected = function (data) {
+            mini.get("__c_type").disable();
+        };
+        designer.clearSelectData = function () {
+            new mini.get("_uid").setValue("");
+            mini.get("__c_type").enable();
+        };
+        designer.initForm('fieldInfo');
+        mini.parse();
+    });
+
+    function save() {
+        var form = new mini.Form("#fieldInfo");
+        form.validate();
+        if (form.isValid() == false) return;
+        designer.saveField(form.getData());
+    }
+
+    function loadData() {
+        if (typeof(id) != "undefined" && id != null) {
+            request.info('/form/',id,function(data){
+                if(data.success){
+                    logger.info(data);
+                    var form = new mini.Form("#formInfo");
+                    form.setData(data.data);
+                    ue.setContent(data.data.content);
+                }
+            });
+        }
+    }
+
+    function saveForm() {
+        var form = new mini.Form("#formInfo");
+        form.validate();
+        if (form.isValid() == false) return;
+        var data = form.getData();
+        data.content = ue.getContent();
+        if (typeof(id) != "undefined" && id != null) {
+            request.update("form/"+id,data, function (data) {
+                logger.info(data);
+                if (data.success) {
+                    mini.alert("保存成功");
+                } else {
+                    mini.alert(data.data);
+                }
+            });
+        }else{
+            request.add("form", data, function (data) {
+                logger.info(data);
+                if (data.success) {
+                    mini.alert("保存成功");
+                } else {
+                    mini.alert(data.data);
+                }
+            });
+        }
+    }
+</script>

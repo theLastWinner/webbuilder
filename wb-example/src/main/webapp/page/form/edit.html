@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head lang="cn">
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../../plugins/ueditor/themes/default/dialogbase.css"/>
+</head>
+<body onload="init()">
+<div id="form">
+
+</div>
+</body>
+</html>
+<script type="text/javascript" charset="utf-8" src="../../resources/boot.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../plugins/miniui/root.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../plugins/ueditor/ueditor.parse.js"></script>
+<script type="text/javascript">
+    var request, config, $;
+    function init() {
+        seajs.use(["request", "jquery", "config"], function (req, jq, conf) {
+            request = req;
+            $ = jq;
+            config = conf;
+            var formId = request.params["formId"];
+            if (!formId)return;
+            request.info("form", formId, function (data) {
+                if (data.success) {
+                    $("#form").html(data.data.content);
+                    loadConfig();
+                    uParse('#form', {
+                        rootPath: '',
+                        chartContainerHeight: 500
+                    })
+                    mini.parse();
+                } else {
+                    alert("加载失败!");
+                }
+            });
+        });
+    }
+    //配置缓存
+    var config_cache={};
+    function loadConfig() {
+        var elements = $("input[url]");
+        var uri = "config/info/";
+        var resources = [];
+        for(var i=0;i<elements.length;i++){
+            var el = $("#"+elements[i].id);
+            var url = el.attr("url");
+            if(url.indexOf(uri)!=-1){
+                url = url.substring(url.indexOf(uri)+uri.length,url.length);
+                var t = url.replace("/",".");
+                var id = t.substring(0,t.indexOf("."));
+                var key = t.substring(t.indexOf(".")+1, t.length);
+                el.removeAttr("url");
+                el.attr("data","config_cache."+id+"['"+key+"']");
+                if(!config_cache[id]||!config_cache[id][key]){
+                    resources.push(t);
+                }
+            }
+        }
+        if(resources.length<=0){
+            return;
+        }
+
+        config.get(resources,function(data){
+            copyObject(data,config_cache);
+            logger.info(config_cache);
+        });
+
+    }
+
+    function copyObject(form,to){
+        for(var k in form){
+            var v = form[k];
+            if(!to[k]){
+                to[k]=v;
+            }else{
+                if(typeof(v)=='object'){
+                   var source = to[k];
+                    copyObject(v,source);
+                    to[k]=source;
+                }else{
+                    to[k]=v;
+                }
+            }
+        }
+    }
+</script>

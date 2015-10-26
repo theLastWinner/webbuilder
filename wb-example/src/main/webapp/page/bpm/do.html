@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head lang="cn">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        #form{
+            width: 1000px;
+            height: 80%;
+            margin: auto;
+        }
+        #bar{
+            bottom: 0px;
+            width: 100%;
+            height: 25px;
+            position: fixed;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body onload="loadPlugins()">
+    <div id="form">
+
+    </div>
+    <div id="bar">
+        <a class="mini-button" onclick="complete({ok:true,success:true})" iconCls="icon-ok">完成任务</a>
+    </div>
+</body>
+</html>
+<script type="text/javascript" charset="utf-8" src="../../resources/boot.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../plugins/miniui/root.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../plugins/ueditor/ueditor.parse.js"></script>
+<script type="text/javascript">
+    var $;
+    var request;
+    var taskId = null;
+    var formIds = null;
+    function loadPlugins() {
+        seajs.use(["jquery", "request"], function (jq, req) {
+            $ = jq;
+            request = req;
+            taskId = request.params.id;
+            //加载所需填写的表单
+            initTaskForm();
+        });
+    }
+
+    function initTaskForm() {
+        request.post("/bpm/process/task/" + taskId + "/formKey/", {}, function (e) {
+            if (!e.success) {
+                mini.alert(e.data)
+                return;
+            }
+            $("#form").html("");
+            formIds = e.data;
+            formIds.forEach(function(formId){
+                //创建form容器
+                $("#form").append("<div id='"+formId+"' class='form "+formId+"'></div>");
+                request.get("/form/"+formId,{},function(res){
+                    if (!res.success) {
+                        mini.alert(res.data)
+                        return;
+                    }
+                    appendForm(res.data);
+                })
+            });
+        });
+    }
+    function complete(varl){
+        var formData = {};
+        formIds.forEach(function(e){
+            var form = new mini.Form(e);
+            form.validate();
+            if (form.isValid() == false) {
+                mini.alert("数据未填写完整,请检查！");
+                return;
+            };
+            formData[e]=form.getData();
+        });
+        request.post("/bpm/process/"+taskId+"/complete/",{formData:mini.encode(formData),"var":mini.encode(varl)},function(e){
+            mini.alert(e.data);
+        });
+    }
+
+    function appendForm(form){
+        logger.info(form);
+        $("#"+form.u_id).html(form.content);
+        uParse('#form', {
+            rootPath: getRootPath(),
+            chartContainerHeight: 500
+        })
+        mini.parse();
+    }
+</script>

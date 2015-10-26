@@ -13,5 +13,7 @@
         <module>wb-bpm</module>
         <module>wb-core</module>
         <module>wb-utils</module>
+        <module>wb-example</module>
+        <module>wb-search</module>
     </modules>
 </project>
