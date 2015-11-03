@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- logback 日志的配置文件 -->
+<configuration>
+	<!-- 控制台输出日志 -->
+	<appender name="Console" class="org.webbuilder.generator.service.logger.append.JTextAreaAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %logger{0} > %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 日志输出 到文件-->
+	<appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>log/org.webbuilder.web.log_%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %logger{0} > %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<root level="ON">
+		<appender-ref ref="Console" />
+		<!-- 
+		<appender-ref ref="DB" /> 
+		<appender-ref ref="File" /> 
+		 -->
+	</root>
+</configuration>
