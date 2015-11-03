@@ -39,6 +39,13 @@ public class StringUtil {
     }
 
 
+    public static String concat(String s, String... more) {
+        StringBuilder buf = new StringBuilder(s);
+        for (String t : more)
+            buf.append(t);
+        return buf.toString();
+    }
+
     /**
      * 获取汉字全拼
      *

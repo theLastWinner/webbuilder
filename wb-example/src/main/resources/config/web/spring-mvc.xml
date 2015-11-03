@@ -112,4 +112,5 @@
             <bean class="org.webbuilder.web.core.websocket.HandshakeInterceptor"/>
         </websocket:handshake-interceptors>
     </websocket:handlers>
+
 </beans>

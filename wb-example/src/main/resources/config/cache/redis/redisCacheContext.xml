@@ -41,7 +41,6 @@
         <property name="defaultStorageClass" value="org.webbuilder.utils.storage.instance.redis.RedisQueueStorage"/>
     </bean>
 
-
     <!--httpSession管理，存放session的redis DB应该只用于session维护，避免其他缓存驱动使用此DB-->
     <bean id="httpSessionRedisPool" class="redis.clients.jedis.ShardedJedisPool">
         <constructor-arg index="0" name="poolConfig" ref="redisPoolConfig"/>
@@ -69,10 +68,6 @@
         <property name="driver" ref="redisDriver"/>
     </bean>
 
-    <bean id="keyGenerator" class="org.webbuilder.web.core.cache.CommonKeyGenerator">
-        <!--key 是否进行编码 支持MD5,HASH-->
-        <property name="keyEncodeType" value="MD5"></property>
-    </bean>
     <!--缓存注解支持,在需要缓存的service方法中，注解 @Cacheable 或者@CacheEvict-->
     <cache:annotation-driven cache-manager="cacheManager"/>
 

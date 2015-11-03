@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.webbuilder.web.service.script.DynamicScriptService;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -26,6 +27,10 @@ public class ServerInitConfig implements ApplicationListener {
 
     @Resource
     private FormService formService;
+
+    @Resource
+    private DynamicScriptService dynamicScriptService;
+
 
     public void initCustomForm() {
         try {
@@ -46,7 +51,7 @@ public class ServerInitConfig implements ApplicationListener {
                 metaData.setDefineContent(data.getContent());
                 metaData.setDefineContentType(TableMetaData.DefineContentType.HTML);
                 metaData.getFields().addAll(FormService.DEFAULT_FIELD);
-                formService.initForeign(metaData,data.getForeigns());
+                formService.initForeign(metaData, data.getForeigns());
                 dataBase.getParser().parse(metaData);
                 dataBase.putTable(metaData);
             }
@@ -57,6 +62,11 @@ public class ServerInitConfig implements ApplicationListener {
 
     public void init() {
         initCustomForm();
+        try {
+            dynamicScriptService.compileAll();
+        } catch (Exception e) {
+            logger.error("compile script error!", e);
+        }
     }
 
     @Override

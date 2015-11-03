@@ -1,5 +1,7 @@
 package org.webbuilder.web.po.user;
 
+import org.joda.time.DateTime;
+import org.webbuilder.utils.base.DateTimeUtils;
 import org.webbuilder.utils.base.MapUtils;
 import org.webbuilder.web.core.bean.GenericPo;
 import org.webbuilder.web.po.module.Module;
@@ -74,6 +76,16 @@ public class User extends GenericPo<String> {
     public Set<Module> getModules() {
         if (roleInfo == null) initRoleInfo();
         return roleInfo.keySet();
+    }
+
+    public Set<Module> getModulesByPid(String pid) {
+        Set<Module> modules = new LinkedHashSet<>();
+        for (Module module : getModules()) {
+            if (pid.equals(module.getP_id())) {
+                modules.add(module);
+            }
+        }
+        return modules;
     }
 
     public boolean hasAccessRole(String rId) {
@@ -290,5 +302,10 @@ public class User extends GenericPo<String> {
 
     public void setRoleInfo(Map<Module, Set<String>> roleInfo) {
         this.roleInfo = roleInfo;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(DateTimeUtils.formatUnknownString2Date("2015-11-02").getTime());
+        System.out.println(DateTimeUtils.formatUnknownString2Date("2015-11-03").getTime());
     }
 }

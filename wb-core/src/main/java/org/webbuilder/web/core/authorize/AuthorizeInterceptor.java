@@ -83,7 +83,7 @@ public class AuthorizeInterceptor implements HandlerInterceptor {
                 authorizeInfo.setMod(authorize.mod());
         }
 
-        boolean doAuthorize = (classAuth != null && authorize != null);//如果进行了注解，代表必须授权
+        boolean doAuthorize = (classAuth != null || authorize != null);//如果进行了注解，代表必须授权
         //判断指定了必须授权的地址
         if (!doAuthorize) {
             if (includes.size() > 0) {

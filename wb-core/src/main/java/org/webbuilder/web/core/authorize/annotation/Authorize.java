@@ -34,11 +34,18 @@ public @interface Authorize {
     String[] level() default {};
 
     /**
-     * 表达式验证如 "#user.dep='01'"
+     * 表达式验证如
      *
      * @return
      */
     String[] expression() default {};
+
+    /**
+     * 表达式语言，默认spring表达式
+     *
+     * @return 表达式语言
+     */
+    String expressionLanguage() default "spel";
 
     /**
      * 是否为api接口，为true时，不使用用户登录策略。

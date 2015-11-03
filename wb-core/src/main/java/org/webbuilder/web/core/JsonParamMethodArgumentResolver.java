@@ -2,6 +2,8 @@ package org.webbuilder.web.core;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webbuilder.utils.base.StringUtil;
 import org.webbuilder.web.core.bean.JsonParam;
 import org.springframework.core.MethodParameter;
@@ -19,6 +21,8 @@ import java.util.Map;
  * Created by 浩 on 2015-09-29 0029.
  */
 public class JsonParamMethodArgumentResolver implements HandlerMethodArgumentResolver {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
         return methodParameter.hasParameterAnnotation(JsonParam.class);
@@ -30,9 +34,15 @@ public class JsonParamMethodArgumentResolver implements HandlerMethodArgumentRes
                                   NativeWebRequest nativeWebRequest,
                                   WebDataBinderFactory webDataBinderFactory) throws Exception {
         JsonParam jsonParam = methodParameter.getParameterAnnotation(JsonParam.class);
+        Class<?> type = jsonParam.type();
+        if (type == Object.class) {
+            type = methodParameter.getParameterType();
+        }
         String json;
         if (!"".equals(jsonParam.value())) {
             json = nativeWebRequest.getParameter(jsonParam.value());
+            if (json == null)
+                json = jsonParam.defaultValue();
         } else {
             Map<String, String[]> map = nativeWebRequest.getParameterMap();
             JSONObject jsonObject = new JSONObject();
@@ -42,7 +52,7 @@ public class JsonParamMethodArgumentResolver implements HandlerMethodArgumentRes
                     Object obj = val;
                     try {
                         Field field = methodParameter.getParameterType().getDeclaredField(entry.getKey());
-                        if (field.getType().isAssignableFrom(Number.class)|| Arrays.asList("int","double","long").contains(field.getType().getSimpleName())) {
+                        if (field.getType().isAssignableFrom(Number.class) || Arrays.asList("int", "double", "long").contains(field.getType().getSimpleName())) {
                             if (!StringUtil.isNumber(obj)) {
                                 continue;
                             }
@@ -71,9 +81,10 @@ public class JsonParamMethodArgumentResolver implements HandlerMethodArgumentRes
             json = jsonObject.toJSONString();
         }
         try {
-            return JSON.parseObject(json, methodParameter.getParameterType());
+            return JSON.parseObject(json, type);
         } catch (Exception e) {
-            return methodParameter.getParameterType().newInstance();
+            logger.error("init JsonParam error", e);
+            return type.newInstance();
         }
     }
 

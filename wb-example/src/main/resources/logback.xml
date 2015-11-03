@@ -9,7 +9,7 @@
     </appender>
 
     <!-- 自定义输出日志 -->
-    <appender name="Custom" class="com.cqth.web.core.logger.LoggerAppenderAdapter">
+    <appender name="Custom" class="org.webbuilder.web.core.logger.LoggerAppenderAdapter">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} > %-5level %logger{35} - %m%n</pattern>
         </encoder>

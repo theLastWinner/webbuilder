@@ -7,6 +7,7 @@ import org.webbuilder.web.po.module.Module;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 系统模块角色绑定
@@ -29,6 +30,18 @@ public class RoleModule extends GenericPo<String> {
     private transient Module module;
 
     private List<String> levels;
+
+    //事件脚本配置 like : {"U":"script_id",....}
+    private String script_conf;
+
+    private Map<String, String> script_confMap;
+
+    public boolean on(String event, Map<String, Object> param) {
+        if(script_confMap!=null){
+            
+        }
+        return true;
+    }
 
     /**
      * 获取 主键
@@ -119,7 +132,7 @@ public class RoleModule extends GenericPo<String> {
                 e.printStackTrace();
                 levels = new LinkedList<>();
             }
-        }else{
+        } else {
             levels = new LinkedList<>();
         }
         return levels;

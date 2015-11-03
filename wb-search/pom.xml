@@ -12,9 +12,7 @@
     <artifactId>search</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-
     <dependencies>
-
         <dependency>
             <groupId>org.webbuilder</groupId>
             <artifactId>utils</artifactId>

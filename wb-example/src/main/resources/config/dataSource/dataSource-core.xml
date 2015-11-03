@@ -97,8 +97,9 @@
     <!-- 事务 aop 配置 -->
     <aop:config>
         <aop:pointcut id="serviceMethods"
-                      expression="(execution(* org.webbuilder.*.service..*(..))
-                      ) and !execution(* org.webbuilder.web.service.storage..*(..))"/>
+                      expression="(execution(* org.webbuilder.*.service..*(..)))
+                       and !execution(* org.webbuilder.web.service.storage..*(..))
+                       and !@annotation(org.webbuilder.web.core.aop.transactional.TransactionDisabled)"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
     </aop:config>
     <!-- 配置使Spring采用CGLIB代理 -->

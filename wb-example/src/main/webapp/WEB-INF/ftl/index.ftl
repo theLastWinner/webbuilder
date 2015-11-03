@@ -38,7 +38,7 @@
         <div class="logo"></div>
     </div>
     <div title="south" region="south" showSplit="false" showHeader="false" height="30">
-        <div style="line-height:28px;text-align:center;cursor:default">Copyright © 重庆泰虹医药网络发展有限公司版权所有</div>
+        <div style="line-height:28px;text-align:center;cursor:default">Copyright ©</div>
     </div>
     <div showHeader="false" region="west" width="180" maxWidth="250" minWidth="100">
         <div id="leftTree" class="mini-outlookmenu" onitemselect="onItemSelect"
