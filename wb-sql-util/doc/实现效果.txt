@@ -1,0 +1,25 @@
+1，自动建表
+2，自动构建查询条件
+        //username$LIKE="张"
+        // where *** and username like '%张%'
+
+        // username$LIKE={type:"or",value:"张",nest:{name$LIKE:{type:"or",value:"呵呵"}}}
+        // where *** or (username like '%张%' or name like '%呵呵%')
+
+        // username$LIKE={type:"or",value:"张",nest:{age$GT:{type:"and",value:20,nest{origin:"重庆"}} } }
+        // where *** or (username like '%张%' and (age >20 and origin ='重庆')  )
+
+        // areaId$IN={type:"and",isSql:true,value:"select id from area where pid > #{pid}" }
+        // where *** and areaId in(select id from area  where pid > ?)
+
+        //includes = ["id","info.name"]
+        //includes = [{field:"id",as:"编号",method:"distinct"},"info.name"]
+加载方法；
+// dataBase.createTable(name,def[html,obj,json]);
+
+调用方法;
+// Table table= dataBase.getTable("s_user");
+// Query query = table.createQuery();
+// List<Map> = query.list({查询条件map});
+// int size = query.total({查询条件map});
+// Map map =  query.single({查询条件map});
