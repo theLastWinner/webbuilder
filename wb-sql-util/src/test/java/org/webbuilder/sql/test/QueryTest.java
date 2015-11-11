@@ -1,6 +1,7 @@
 package org.webbuilder.sql.test;
 
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.webbuilder.sql.*;
@@ -25,12 +26,34 @@ import java.util.Set;
 public class QueryTest {
     DataBase dataBase;
 
+    Connection connection;
+
+    public QueryTest() {
+        try {
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+            connection = DriverManager.getConnection("jdbc:oracle:thin:@server.142:1521:ORCL", "cqcy", "cqcy");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @After
+    public void destroy() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Before
     public void init() throws Exception {
-        Class.forName("oracle.jdbc.driver.OracleDriver");
 
+        //定义数据库
         DataBaseMetaData dataBaseMetaData = new DataBaseMetaData() {
+            //默认的sql渲染器
             SqlTemplateRender render = new CommonSqlTemplateRender();
+            //oracle关键字映射器
             KeywordsMapper mapper = new OracleKeywordsMapper();
 
             @Override
@@ -51,26 +74,20 @@ public class QueryTest {
         dataBase = new CommonDataBase(dataBaseMetaData, new AbstractJdbcSqlExecutor() {
             @Override
             public Connection getConnection() {
-                try {
-                    return DriverManager.getConnection("jdbc:oracle:thin:@server.142:1521:ORCL", "cqcy", "cqcy");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
+                return connection;
             }
-
 
             @Override
             public void resetConnection(Connection connection) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                // try {
+                //  connection.close();
+                // } catch (SQLException e) {
+                //    e.printStackTrace();
+                // }
             }
         });
 
-
+        //定义表结构
         TableMetaData s_user = new TableMetaData();
         s_user.setName("s_user");
         s_user.setDataBaseMetaData(dataBaseMetaData);
@@ -78,6 +95,7 @@ public class QueryTest {
         s_user.addField(new FieldMetaData("username", String.class, "varchar2(100)"));
         s_user.addField(new FieldMetaData("area_id", Integer.class, "number(4,0)"));
 
+        //定义表关联条件
         TableMetaData.Correlation correlation = new TableMetaData.Correlation();
         ExecuteCondition condition = new ExecuteCondition();
         condition.setField("area_id");
@@ -88,12 +106,14 @@ public class QueryTest {
 
         s_user.addCorrelation(correlation);
 
+        //定义表结构
         TableMetaData area = new TableMetaData();
         area.setName("area");
         area.setDataBaseMetaData(dataBaseMetaData);
         area.addField(new FieldMetaData("id", String.class, "varchar2(100)"));
         area.addField(new FieldMetaData("name", String.class, "varchar2(100)"));
 
+        //添加表到数据库
         dataBaseMetaData.addTable(s_user);
         dataBaseMetaData.addTable(area);
 
@@ -102,19 +122,25 @@ public class QueryTest {
     @Test
     public void testSelect() throws Exception {
         Table table = dataBase.getTable("s_user");
+        //创建查询
         Query query = table.createQuery();
+        //构造查询条件
         QueryParam param = new QueryParam(false);
-        Set<ExecuteCondition> conditions =
-                ExecuteConditionParser.parseByJson("{\"area_id$NOTNULL\":\"1\",\"username$LIKE\":{\"value\":\"w\",\"nest\":{\"area.id\":{\"type\":\"or\",\"value\":2}} }}");
-        param.setConditions(conditions);
+        String where = "{\"area_id$NOTNULL\":\"1\"," +
+                "\"username$LIKE\":{\"value\":\"w\",\"nest\":{\"area.id\":{\"type\":\"or\",\"value\":2}} }}";
+        //将json转为查询条件列表
+        Set<ExecuteCondition> conditions = ExecuteConditionParser.parseByJson(where);
 
+        param.setConditions(conditions);
+        param.include("id", "username", "area.name");
+        //不分页查询，默认是分页的
         param.setPaging(false);
-        param.include("username");
         System.out.println(query.list(param));
+        //进行分页
         param.doPaging(0, 5);
         System.out.println(query.list(param));
-        System.out.println(query.single(param));
-        System.out.println(query.total(param));
+        System.out.println(query.single(param));//单个值
+        System.out.println(query.total(param));//查询总和
 
     }
 }
