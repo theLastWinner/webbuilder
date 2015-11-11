@@ -87,7 +87,7 @@ public class QueryTest {
             }
         });
 
-        //定义表结构
+        //定义表结构---- 表结构可通过解析html，xml，json等自动生成
         TableMetaData s_user = new TableMetaData();
         s_user.setName("s_user");
         s_user.setDataBaseMetaData(dataBaseMetaData);
@@ -95,23 +95,23 @@ public class QueryTest {
         s_user.addField(new FieldMetaData("username", String.class, "varchar2(100)"));
         s_user.addField(new FieldMetaData("area_id", Integer.class, "number(4,0)"));
 
-        //定义表关联条件
-        TableMetaData.Correlation correlation = new TableMetaData.Correlation();
-        ExecuteCondition condition = new ExecuteCondition();
-        condition.setField("area_id");
-        condition.setSql(true);
-        condition.setValue("area.id");
-        correlation.addCondition(condition);
-        correlation.setTargetTable("area");
-
-        s_user.addCorrelation(correlation);
-
         //定义表结构
         TableMetaData area = new TableMetaData();
         area.setName("area");
         area.setDataBaseMetaData(dataBaseMetaData);
         area.addField(new FieldMetaData("id", String.class, "varchar2(100)"));
         area.addField(new FieldMetaData("name", String.class, "varchar2(100)"));
+
+        //定义表关联条件
+        TableMetaData.Correlation correlation = new TableMetaData.Correlation();
+        ExecuteCondition condition = new ExecuteCondition();
+        condition.setSql(true);//直接拼接sql方式  area_id=area.id
+        condition.setField("area_id");
+        condition.setValue("area.id");
+        correlation.addCondition(condition);
+        correlation.setTargetTable("area");
+        s_user.addCorrelation(correlation);
+
 
         //添加表到数据库
         dataBaseMetaData.addTable(s_user);
