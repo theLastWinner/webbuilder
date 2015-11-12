@@ -39,9 +39,9 @@ public class StringUtil {
     }
 
 
-    public static String concat(String s, String... more) {
-        StringBuilder buf = new StringBuilder(s);
-        for (String t : more)
+    public static String concat(Object s, Object... more) {
+        StringBuilder buf = new StringBuilder(String.valueOf(s));
+        for (Object t : more)
             buf.append(t);
         return buf.toString();
     }
@@ -234,6 +234,18 @@ public class StringUtil {
         return url.replaceAll(" ", "%20");
     }
 
+    public static int toInt(Object object, int defaultValue) {
+        if (object instanceof Integer)
+            return (Integer) object;
+        if (isInt(object)) {
+            return Integer.parseInt(object.toString());
+        }
+        if (isDouble(object)) {
+            return (int) Double.parseDouble(object.toString());
+        }
+        return defaultValue;
+    }
+
     public static int toInt(Object object) {
         if (object instanceof Integer)
             return (Integer) object;
@@ -267,4 +279,12 @@ public class StringUtil {
         return 0;
     }
 
+
+    public static String[] splitFirst(String str, String regex) {
+        return str.split(regex,2);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(ListUtil.toString("user.id.aa.bb.cc".split("[.]",2)));
+    }
 }

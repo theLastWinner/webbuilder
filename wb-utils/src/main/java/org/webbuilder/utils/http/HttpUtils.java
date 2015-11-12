@@ -6,6 +6,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.webbuilder.utils.base.ListUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +35,20 @@ public class HttpUtils {
         httpClient.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
         httpClient.executeMethod(post);
         return post.getResponseBodyAsString();
+    }
+
+    public static PostMethod doPostv2(String url, Map<String, String> param, Map<String, String> headers) throws Exception {
+        PostMethod post = new PostMethod(url);
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            post.addRequestHeader(entry.getKey(), entry.getValue());
+        }
+        for (Map.Entry<String, String> entry : param.entrySet()) {
+            post.setParameter(entry.getKey(), entry.getValue());
+        }
+        HttpClient httpClient = new HttpClient();
+        httpClient.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "UTF-8");
+        httpClient.executeMethod(post);
+        return post;
     }
 
     public static String doGet(String url) throws Exception {

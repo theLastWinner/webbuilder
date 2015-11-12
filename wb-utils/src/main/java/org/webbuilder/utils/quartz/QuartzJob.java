@@ -83,7 +83,6 @@ public class QuartzJob implements Job {
 
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
         JobDataMap dataMap = arg0.getJobDetail().getJobDataMap();
-
         if (getExecutor() == null) {
             // 初始化操作
             Object originalJob_ = dataMap.get("originalJob");

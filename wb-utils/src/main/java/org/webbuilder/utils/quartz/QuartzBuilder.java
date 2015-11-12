@@ -25,7 +25,6 @@ public class QuartzBuilder {
     }
 
     public static void addJob(QuartzJob job) throws Exception {
-
         LOGGER.info("add QuartzJob:" + job.getGroup() + "." + job.getName() + "-->" + job.getExecutor().getClass() + " ,cron=" + job.getCron());
         // cron表达式
         CronScheduleBuilder builder = CronScheduleBuilder.cronSchedule(job.getCron());

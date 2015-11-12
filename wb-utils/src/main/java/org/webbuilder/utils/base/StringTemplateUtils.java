@@ -87,6 +87,8 @@ public class StringTemplateUtils {
         return true;
     }
 
+    private static final Pattern pat = Pattern.compile("(?<=#\\()(.+?)(?=\\))");
+
     /**
      * 自定义标记语言进行模板预解析
      *
@@ -97,14 +99,14 @@ public class StringTemplateUtils {
      */
     public static String generate(Map<String, Object> data, String template) throws Exception {
         //先直接对#()标记进行编译
-        Pattern pat = Pattern.compile("(?<=#\\()(.+?)(?=\\))");
         Matcher mat = pat.matcher(template);
         while (mat.find()) {
             String kw = mat.group(0);
             Object val;
             //like user.username
             if (kw.contains(".")) {
-                val = ClassUtil.getValueByAttribute(kw.substring(kw.indexOf(".") + 1), data.get(kw.split("[.]")[0]));
+                String[] str = StringUtil.splitFirst(kw, ".");
+                val = ClassUtil.getValueByAttribute(str[0], str[1]);
             } else {
                 val = data.get(kw);
             }

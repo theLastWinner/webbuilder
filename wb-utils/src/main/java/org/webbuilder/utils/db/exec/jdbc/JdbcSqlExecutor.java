@@ -136,7 +136,7 @@ public class JdbcSqlExecutor implements SqlExecutor {
             if (object instanceof Date)
                 statement.setTimestamp(index++, new java.sql.Timestamp(((Date) object).getTime()));
             else if (object instanceof byte[]) {
-                statement.setBlob(1, new ByteArrayInputStream((byte[]) object));
+                statement.setBlob(index++, new ByteArrayInputStream((byte[]) object));
             } else
                 statement.setObject(index++, object);
 

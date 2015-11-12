@@ -30,7 +30,7 @@ public class MapResultHelper extends ResultHelper<Map<String, Object>> {
         addDataformater(new DataFormater<BigDecimal>() {
             @Override
             public Object format(BigDecimal value) {
-                return value.toString();
+                return value.longValue();
             }
         });
     }
