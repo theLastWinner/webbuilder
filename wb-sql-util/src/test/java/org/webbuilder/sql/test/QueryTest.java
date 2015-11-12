@@ -8,7 +8,10 @@ import org.webbuilder.sql.*;
 import org.webbuilder.sql.keywords.KeywordsMapper;
 import org.webbuilder.sql.keywords.dialect.oracle.OracleKeywordsMapper;
 import org.webbuilder.sql.param.ExecuteCondition;
+import org.webbuilder.sql.param.IncludeField;
+import org.webbuilder.sql.param.MethodField;
 import org.webbuilder.sql.param.QueryParam;
+import org.webbuilder.sql.param.query.OrderBy;
 import org.webbuilder.sql.parser.ExecuteConditionParser;
 import org.webbuilder.sql.render.template.SqlTemplateRender;
 import org.webbuilder.sql.support.common.CommonDataBase;
@@ -18,7 +21,6 @@ import org.webbuilder.sql.support.executor.AbstractJdbcSqlExecutor;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Set;
 
 /**
  * Created by 浩 on 2015-11-10 0010.
@@ -124,23 +126,23 @@ public class QueryTest {
         Table table = dataBase.getTable("s_user");
         //创建查询
         Query query = table.createQuery();
-        //构造查询条件
-        QueryParam param = new QueryParam(false);
+        //-----------------多条件查询条件-------------
+        QueryParam param = new QueryParam();
         String where = "{\"area_id$NOTNULL\":\"1\"," +
                 "\"username$LIKE\":{\"value\":\"w\",\"nest\":{\"area.id\":{\"type\":\"or\",\"value\":2}} }}";
-        //将json转为查询条件列表
-        Set<ExecuteCondition> conditions = ExecuteConditionParser.parseByJson(where);
 
-        param.setConditions(conditions);
-        param.include("id", "username", "area.name");
-        //不分页查询，默认是分页的
-        param.setPaging(false);
+        param.select("id", "username", "area.name").where(where).orderBy("id").noPaging();
         System.out.println(query.list(param));
         //进行分页
         param.doPaging(0, 5);
         System.out.println(query.list(param));
         System.out.println(query.single(param));//单个值
         System.out.println(query.total(param));//查询总和
+
+        //------------------自定义函数查询--------------
+        param = new QueryParam(false);
+        param.include(new MethodField().count("id").as("total"));
+        System.out.println(query.single(param));
 
     }
 }

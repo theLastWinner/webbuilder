@@ -66,7 +66,4 @@ public class OracleKeywordsMapper extends AbstractKeywordsMapper {
         return builder.toString();
     }
 
-    public static void main(String[] args) {
-        System.out.println(new OracleKeywordsMapper().pager("select * from s_user", 0, 10));
-    }
 }

@@ -81,12 +81,18 @@ public class IncludeField implements Serializable {
         this.as = as;
     }
 
+    public IncludeField as(String as) {
+        this.as = as;
+        return this;
+    }
+
     public String getMethod() {
         return method;
     }
 
-    public void setMethod(String method) {
+    public IncludeField setMethod(String method) {
         this.method = method;
+        return this;
     }
 
     @Override

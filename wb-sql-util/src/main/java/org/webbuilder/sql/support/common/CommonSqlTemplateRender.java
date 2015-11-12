@@ -16,8 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CommonSqlTemplateRender implements SqlTemplateRender {
 
-    protected Map<SqlTemplate.TYPE, SqlTemplate> templateMap = new ConcurrentHashMap<>();
-
     protected Map<String, Map<SqlTemplate.TYPE, SqlTemplate>> cache = new ConcurrentHashMap<>();
 
 
@@ -59,6 +57,6 @@ public class CommonSqlTemplateRender implements SqlTemplateRender {
 
     @Override
     public void init(TableMetaData tableMetaData) {
-        //渲染所有
+
     }
 }

@@ -22,7 +22,6 @@ public class CommonQuery implements Query {
     private SqlTemplate sqlTemplate;
     private SqlExecutor sqlExecutor;
     private ObjectWrapper objectWrapper;
-
     private static ObjectWrapper<Map<String, Object>> DEFAULT_WRAPPER = new HashMapWrapper();
 
     public CommonQuery(SqlTemplate sqlTemplate, SqlExecutor sqlExecutor) {

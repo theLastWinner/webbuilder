@@ -251,7 +251,7 @@ public class SelectTemplateRender implements SqlTemplate {
 
     protected Set<String> buildGroupBy(SqlRenderConfig config, SqlAppender appender) {
         Set<String> tables = new LinkedHashSet<>();
-        Object object = config.getProperty("group by");
+        Object object = config.getProperty("group_by");
         if (object == null) return tables;
         Set<GroupBy> orderBy = initGroupBy(object);
         for (GroupBy by : orderBy) {
@@ -269,19 +269,23 @@ public class SelectTemplateRender implements SqlTemplate {
 
     protected Set<String> buildOrderBy(SqlRenderConfig config, SqlAppender appender) {
         Set<String> tables = new LinkedHashSet<>();
-        Object object = config.getProperty("order by");
+        Object object = config.getProperty("order_by");
+        Object mod = config.getProperty("order_by_mod");
+        if (mod == null) mod = "asc";
         if (object == null) return tables;
         Set<OrderBy> orderBy = initOrderBy(object);
+        boolean hasMore = false;
         for (OrderBy by : orderBy) {
+            if (hasMore)
+                appender.addEdSpc(",");
             by.setMainTable(tableMetaData.getName());
             if (by.isAnotherTable()) {
                 tables.add(by.getTargetTable());
             }
             appender.addEdSpc(keywordsMapper.getFieldTemplate(by));
-            appender.addEdSpc(",");
+            hasMore = true;
         }
-        if (orderBy.size() > 0)
-            appender.remove(appender.size());
+        appender.addEdSpc(String.valueOf(mod));
         return tables;
     }
 
