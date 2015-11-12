@@ -125,6 +125,35 @@ public class SQLTest {
     }
 
     @Test
+    public void testInsert() throws Exception {
+        Table table = dataBase.getTable("s_user");
+        //创建插入
+        Insert update = table.createInsert();
+        InsertParam param = new InsertParam();
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", "admin");
+        data.put("id", "aaa");
+        param.insert(data);
+        System.out.println(update.insert(param));
+    }
+
+
+    @Test
+    public void testUpdate() throws Exception {
+        Table table = dataBase.getTable("s_user");
+        //创建更新
+        Update update = table.createUpdate();
+        //-----------------更新条件-------------
+        UpdateParam param = new UpdateParam();
+        String where = "{\"username\":\"admin\"}";
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", "admin");
+        param.set(data).where(where);
+        System.out.println(update.update(param));
+    }
+
+
+    @Test
     public void testSelect() throws Exception {
         Table table = dataBase.getTable("s_user");
         //创建查询
@@ -147,19 +176,6 @@ public class SQLTest {
         System.out.println(query.single(param));
     }
 
-    @Test
-    public void testUpdate() throws Exception {
-        Table table = dataBase.getTable("s_user");
-        //创建更新
-        Update update = table.createUpdate();
-        //-----------------更新条件-------------
-        UpdateParam param = new UpdateParam();
-        String where = "{\"username\":\"admin\"}";
-        Map<String, Object> data = new HashMap<>();
-        data.put("username", "admin");
-        param.set(data).where(where);
-        System.out.println(update.update(param));
-    }
 
     @Test
     public void testDelete() throws Exception {
@@ -171,18 +187,5 @@ public class SQLTest {
         String where = "{\"id\":\"555555\"}";
         param.where(where);
         System.out.println(delete.delete(param));
-    }
-
-    @Test
-    public void testInsert() throws Exception {
-        Table table = dataBase.getTable("s_user");
-        //创建插入
-        Insert update = table.createInsert();
-        InsertParam param = new InsertParam();
-        Map<String, Object> data = new HashMap<>();
-        data.put("username", "admin");
-        data.put("id", "aaa");
-        param.insert(data);
-        System.out.println(update.insert(param));
     }
 }

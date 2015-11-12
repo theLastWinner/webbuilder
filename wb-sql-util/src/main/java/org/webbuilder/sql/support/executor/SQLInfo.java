@@ -1,4 +1,4 @@
-package org.webbuilder.utils.db.exec;
+package org.webbuilder.sql.support.executor;
 
 /**
  * Created by 浩 on 2015-11-09 0009.

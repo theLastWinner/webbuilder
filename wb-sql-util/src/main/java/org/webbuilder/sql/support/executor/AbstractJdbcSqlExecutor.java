@@ -5,9 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.webbuilder.sql.BindSQL;
 import org.webbuilder.sql.SQL;
 import org.webbuilder.utils.base.ClassUtil;
-import org.webbuilder.utils.base.StringTemplateUtils;
 import org.webbuilder.utils.base.StringUtil;
-import org.webbuilder.utils.db.exec.SQLInfo;
 
 import java.io.ByteArrayInputStream;
 import java.sql.Connection;
