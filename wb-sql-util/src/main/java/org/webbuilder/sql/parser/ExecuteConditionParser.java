@@ -66,7 +66,4 @@ public class ExecuteConditionParser {
         return conditions;
     }
 
-    public static void main(String[] args) {
-        System.out.println(parseByJson("{\"name$LIKE\":{\"value\":\"张三\",\"nest\":{\"age$GT\":{\"type\":\"or\",\"value\":10}} }}"));
-    }
 }

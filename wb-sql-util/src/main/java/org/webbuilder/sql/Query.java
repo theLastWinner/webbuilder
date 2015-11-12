@@ -1,6 +1,6 @@
 package org.webbuilder.sql;
 
-import org.webbuilder.sql.param.QueryParam;
+import org.webbuilder.sql.param.query.QueryParam;
 
 import java.util.List;
 

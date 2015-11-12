@@ -1,5 +1,6 @@
-package org.webbuilder.sql.param;
+package org.webbuilder.sql.param.query;
 
+import org.webbuilder.sql.param.SqlRenderConfig;
 import org.webbuilder.sql.parser.ExecuteConditionParser;
 
 import java.util.Arrays;

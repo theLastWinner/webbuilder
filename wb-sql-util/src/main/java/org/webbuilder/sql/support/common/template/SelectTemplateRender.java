@@ -10,9 +10,9 @@ import org.webbuilder.sql.keywords.KeywordsMapper;
 import org.webbuilder.sql.param.*;
 import org.webbuilder.sql.param.query.GroupBy;
 import org.webbuilder.sql.param.query.OrderBy;
+import org.webbuilder.sql.param.query.QueryParam;
 import org.webbuilder.sql.render.template.SqlTemplate;
 import org.webbuilder.sql.support.common.CommonSql;
-import org.webbuilder.utils.base.StringUtil;
 
 import java.util.*;
 

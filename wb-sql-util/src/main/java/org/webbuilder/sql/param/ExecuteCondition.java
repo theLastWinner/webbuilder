@@ -30,6 +30,13 @@ public class ExecuteCondition {
 
     private TableMetaData tableMetaData;
 
+    public ExecuteCondition() {
+    }
+
+    public ExecuteCondition(String field) {
+        setField(field);
+    }
+
     public TableMetaData getTableMetaData() {
         return tableMetaData;
     }
@@ -72,8 +79,17 @@ public class ExecuteCondition {
         return queryType;
     }
 
-    public void setQueryType(QueryType queryType) {
+    public ExecuteCondition setQueryType(QueryType queryType) {
         this.queryType = queryType;
+        return this;
+    }
+
+    public ExecuteCondition setQueryType(String queryType) {
+        try {
+            setQueryType(QueryType.valueOf(queryType));
+        } catch (Exception e) {
+        }
+        return this;
     }
 
     public boolean isSql() {
@@ -119,6 +135,12 @@ public class ExecuteCondition {
         builder.append(getAppendType()).append(" ").append(getFullField()).append(" ").append(queryType);
         builder.append(" ->").append(nest);
         return builder.toString();
+    }
+
+    public ExecuteCondition sql(String sql) {
+        setSql(true);
+        setValue(sql);
+        return this;
     }
 
     public enum QueryType {

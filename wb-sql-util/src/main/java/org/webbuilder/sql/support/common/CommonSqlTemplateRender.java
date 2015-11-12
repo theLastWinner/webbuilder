@@ -5,7 +5,10 @@ import org.webbuilder.sql.exception.SqlRenderException;
 import org.webbuilder.sql.render.template.SqlRenderParam;
 import org.webbuilder.sql.render.template.SqlTemplate;
 import org.webbuilder.sql.render.template.SqlTemplateRender;
+import org.webbuilder.sql.support.common.template.DeleteTemplateRender;
+import org.webbuilder.sql.support.common.template.InsertTemplateRender;
 import org.webbuilder.sql.support.common.template.SelectTemplateRender;
+import org.webbuilder.sql.support.common.template.UpdateTemplateRender;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +33,21 @@ public class CommonSqlTemplateRender implements SqlTemplateRender {
                     SelectTemplateRender selectTemplateRender = new SelectTemplateRender(tableMetaData);
                     selectTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
                     cacheTemplate(tableName, sqlTemplate = selectTemplateRender);
+                    break;
+                case UPDATE:
+                    UpdateTemplateRender updateTemplateRender = new UpdateTemplateRender(tableMetaData);
+                    updateTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
+                    cacheTemplate(tableName, sqlTemplate = updateTemplateRender);
+                    break;
+                case INSERT:
+                    InsertTemplateRender insertTemplateRender = new InsertTemplateRender(tableMetaData);
+                    insertTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
+                    cacheTemplate(tableName, sqlTemplate = insertTemplateRender);
+                    break;
+                case DELETE:
+                    DeleteTemplateRender deleteTemplateRender = new DeleteTemplateRender(tableMetaData);
+                    deleteTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
+                    cacheTemplate(tableName, sqlTemplate = deleteTemplateRender);
                     break;
             }
         }

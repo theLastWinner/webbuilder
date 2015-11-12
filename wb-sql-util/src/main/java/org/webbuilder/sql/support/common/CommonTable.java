@@ -2,6 +2,7 @@ package org.webbuilder.sql.support.common;
 
 import org.webbuilder.sql.*;
 import org.webbuilder.sql.exception.DeleteException;
+import org.webbuilder.sql.exception.InsertException;
 import org.webbuilder.sql.exception.QueryException;
 import org.webbuilder.sql.exception.UpdateException;
 import org.webbuilder.sql.render.template.SqlTemplate;
@@ -40,11 +41,22 @@ public class CommonTable implements Table {
 
     @Override
     public Update createUpdate() throws UpdateException {
-        return null;
+        SqlTemplate template = metaData.getTemplate(SqlTemplate.TYPE.UPDATE);
+        Update update = new CommonUpdate(template, sqlExecutor);
+        return update;
     }
 
     @Override
     public Delete createDelete() throws DeleteException {
-        return null;
+        SqlTemplate template = metaData.getTemplate(SqlTemplate.TYPE.DELETE);
+        Delete update = new CommonDelete(template, sqlExecutor);
+        return update;
+    }
+
+    @Override
+    public Insert createInsert() throws InsertException {
+        SqlTemplate template = metaData.getTemplate(SqlTemplate.TYPE.INSERT);
+        Insert update = new CommonInsert(template, sqlExecutor);
+        return update;
     }
 }

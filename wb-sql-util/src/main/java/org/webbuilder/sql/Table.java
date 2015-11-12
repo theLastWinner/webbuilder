@@ -1,6 +1,7 @@
 package org.webbuilder.sql;
 
 import org.webbuilder.sql.exception.DeleteException;
+import org.webbuilder.sql.exception.InsertException;
 import org.webbuilder.sql.exception.QueryException;
 import org.webbuilder.sql.exception.UpdateException;
 
@@ -28,5 +29,5 @@ public interface Table {
 
     Delete createDelete() throws DeleteException;
 
-
+    Insert createInsert() throws InsertException;
 }

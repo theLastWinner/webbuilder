@@ -29,6 +29,8 @@ public class FieldMetaData implements Serializable {
 
     private String validator;
 
+    private boolean canUpdate = true;
+
     public FieldMetaData() {
     }
 
@@ -36,6 +38,14 @@ public class FieldMetaData implements Serializable {
         this.name = name;
         this.javaType = javaType;
         this.dataType = dataType;
+    }
+
+    public boolean isCanUpdate() {
+        return canUpdate;
+    }
+
+    public void setCanUpdate(boolean canUpdate) {
+        this.canUpdate = canUpdate;
     }
 
     public String getFullName() {

@@ -18,6 +18,6 @@ public interface SqlTemplate {
     void reload() throws SqlRenderException;
 
     enum TYPE {
-        CREATE, ALTER, SELECT, UPDATE, DELETE
+        CREATE, ALTER,INSERT, SELECT, UPDATE, DELETE
     }
 }

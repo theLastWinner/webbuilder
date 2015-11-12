@@ -3,14 +3,13 @@ package org.webbuilder.sql.support.common;
 import org.webbuilder.sql.Query;
 import org.webbuilder.sql.SQL;
 import org.webbuilder.sql.param.IncludeField;
-import org.webbuilder.sql.param.QueryParam;
+import org.webbuilder.sql.param.query.QueryParam;
 import org.webbuilder.sql.render.template.SqlTemplate;
 import org.webbuilder.sql.support.executor.HashMapWrapper;
 import org.webbuilder.sql.support.executor.ObjectWrapper;
 import org.webbuilder.sql.support.executor.SqlExecutor;
 import org.webbuilder.utils.base.StringUtil;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 

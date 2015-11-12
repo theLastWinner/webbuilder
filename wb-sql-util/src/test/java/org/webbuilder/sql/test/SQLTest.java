@@ -8,11 +8,11 @@ import org.webbuilder.sql.*;
 import org.webbuilder.sql.keywords.KeywordsMapper;
 import org.webbuilder.sql.keywords.dialect.oracle.OracleKeywordsMapper;
 import org.webbuilder.sql.param.ExecuteCondition;
-import org.webbuilder.sql.param.IncludeField;
 import org.webbuilder.sql.param.MethodField;
-import org.webbuilder.sql.param.QueryParam;
-import org.webbuilder.sql.param.query.OrderBy;
-import org.webbuilder.sql.parser.ExecuteConditionParser;
+import org.webbuilder.sql.param.delete.DeleteParam;
+import org.webbuilder.sql.param.insert.InsertParam;
+import org.webbuilder.sql.param.query.QueryParam;
+import org.webbuilder.sql.param.update.UpdateParam;
 import org.webbuilder.sql.render.template.SqlTemplateRender;
 import org.webbuilder.sql.support.common.CommonDataBase;
 import org.webbuilder.sql.support.common.CommonSqlTemplateRender;
@@ -21,19 +21,22 @@ import org.webbuilder.sql.support.executor.AbstractJdbcSqlExecutor;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by 浩 on 2015-11-10 0010.
  */
-public class QueryTest {
+public class SQLTest {
     DataBase dataBase;
 
     Connection connection;
 
-    public QueryTest() {
+    public SQLTest() {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             connection = DriverManager.getConnection("jdbc:oracle:thin:@server.142:1521:ORCL", "cqcy", "cqcy");
+            connection.setAutoCommit(false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -42,6 +45,7 @@ public class QueryTest {
     @After
     public void destroy() {
         try {
+            connection.rollback();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -114,7 +118,6 @@ public class QueryTest {
         correlation.setTargetTable("area");
         s_user.addCorrelation(correlation);
 
-
         //添加表到数据库
         dataBaseMetaData.addTable(s_user);
         dataBaseMetaData.addTable(area);
@@ -138,11 +141,48 @@ public class QueryTest {
         System.out.println(query.list(param));
         System.out.println(query.single(param));//单个值
         System.out.println(query.total(param));//查询总和
-
         //------------------自定义函数查询--------------
         param = new QueryParam(false);
         param.include(new MethodField().count("id").as("total"));
         System.out.println(query.single(param));
+    }
 
+    @Test
+    public void testUpdate() throws Exception {
+        Table table = dataBase.getTable("s_user");
+        //创建更新
+        Update update = table.createUpdate();
+        //-----------------更新条件-------------
+        UpdateParam param = new UpdateParam();
+        String where = "{\"username\":\"admin\"}";
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", "admin");
+        param.set(data).where(where);
+        System.out.println(update.update(param));
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        Table table = dataBase.getTable("s_user");
+        //创建删除
+        Delete delete = table.createDelete();
+        //-----------------条件-------------
+        DeleteParam param = new DeleteParam();
+        String where = "{\"id\":\"555555\"}";
+        param.where(where);
+        System.out.println(delete.delete(param));
+    }
+
+    @Test
+    public void testInsert() throws Exception {
+        Table table = dataBase.getTable("s_user");
+        //创建插入
+        Insert update = table.createInsert();
+        InsertParam param = new InsertParam();
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", "admin");
+        data.put("id", "aaa");
+        param.insert(data);
+        System.out.println(update.insert(param));
     }
 }
