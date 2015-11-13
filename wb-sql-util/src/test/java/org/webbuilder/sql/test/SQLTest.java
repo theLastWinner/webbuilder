@@ -13,10 +13,13 @@ import org.webbuilder.sql.param.delete.DeleteParam;
 import org.webbuilder.sql.param.insert.InsertParam;
 import org.webbuilder.sql.param.query.QueryParam;
 import org.webbuilder.sql.param.update.UpdateParam;
+import org.webbuilder.sql.parser.CommonTableMetaDataParser;
 import org.webbuilder.sql.render.template.SqlTemplateRender;
 import org.webbuilder.sql.support.common.CommonDataBase;
 import org.webbuilder.sql.support.common.CommonSqlTemplateRender;
 import org.webbuilder.sql.support.executor.AbstractJdbcSqlExecutor;
+import org.webbuilder.utils.base.Resources;
+import org.webbuilder.utils.base.file.FileUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,9 +37,9 @@ public class SQLTest {
 
     public SQLTest() {
         try {
-            Class.forName("oracle.jdbc.driver.OracleDriver");
+             Class.forName("oracle.jdbc.driver.OracleDriver");
             connection = DriverManager.getConnection("jdbc:oracle:thin:@server.142:1521:ORCL", "cqcy", "cqcy");
-            connection.setAutoCommit(false);
+             connection.setAutoCommit(false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,29 +97,17 @@ public class SQLTest {
         });
 
         //定义表结构---- 表结构可通过解析html，xml，json等自动生成
-        TableMetaData s_user = new TableMetaData();
+
+        String s_user_content = FileUtil.readFile2String(Resources.getResourceAsFile("tables/s_user.html").getAbsolutePath());
+        TableMetaData s_user = new CommonTableMetaDataParser().parse(s_user_content, "html");
         s_user.setName("s_user");
         s_user.setDataBaseMetaData(dataBaseMetaData);
-        s_user.addField(new FieldMetaData("id", String.class, "varchar2(100)"));
-        s_user.addField(new FieldMetaData("username", String.class, "varchar2(100)"));
-        s_user.addField(new FieldMetaData("area_id", Integer.class, "number(4,0)"));
 
         //定义表结构
-        TableMetaData area = new TableMetaData();
+        String area_content = FileUtil.readFile2String(Resources.getResourceAsFile("tables/area.html").getAbsolutePath());
+        TableMetaData area = new CommonTableMetaDataParser().parse(area_content, "html");
         area.setName("area");
         area.setDataBaseMetaData(dataBaseMetaData);
-        area.addField(new FieldMetaData("id", String.class, "varchar2(100)"));
-        area.addField(new FieldMetaData("name", String.class, "varchar2(100)"));
-
-        //定义表关联条件
-        TableMetaData.Correlation correlation = new TableMetaData.Correlation();
-        ExecuteCondition condition = new ExecuteCondition();
-        condition.setSql(true);//直接拼接sql方式  area_id=area.id
-        condition.setField("area_id");
-        condition.setValue("area.id");
-        correlation.addCondition(condition);
-        correlation.setTargetTable("area");
-        s_user.addCorrelation(correlation);
 
         //添加表到数据库
         dataBaseMetaData.addTable(s_user);

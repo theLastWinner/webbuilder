@@ -46,7 +46,7 @@ public class UpdateTemplateRender extends SelectTemplateRender {
                 }
             }
         }
-        if (",".equals(appender.getLast()))
+        if (appender.size() > 0 && ",".equals(appender.getLast()))
             appender.removeLast();
         return param;
     }
