@@ -45,6 +45,11 @@ public class SelectTemplateRender implements SqlTemplate {
         return TYPE.SELECT;
     }
 
+    @Override
+    public TableMetaData getTableMetaData() {
+        return tableMetaData;
+    }
+
     /**
      * 渲染需要查询的字段信息
      *

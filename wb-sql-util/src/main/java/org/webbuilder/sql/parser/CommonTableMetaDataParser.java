@@ -4,9 +4,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.webbuilder.sql.FieldMetaData;
 import org.webbuilder.sql.TableMetaData;
 import org.webbuilder.sql.param.ExecuteCondition;
+import org.webbuilder.sql.trigger.ScriptTriggerSupport;
 import org.webbuilder.utils.base.StringUtil;
 
 import java.util.Date;
@@ -19,6 +22,8 @@ import java.util.Map;
 public class CommonTableMetaDataParser implements TableMetaDataParser {
 
     private static final Map<String, Class> typeMapper = new LinkedHashMap<>();
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     static {
         typeMapper.put("int", Integer.class);
@@ -98,6 +103,27 @@ public class CommonTableMetaDataParser implements TableMetaDataParser {
             }
             tableMetaData.addCorrelation(cor);
         }
+
+        //解析触发器
+        Elements triggers = document.getElementsByAttribute("trigger");
+        for (Element trigger : triggers) {
+            String name = trigger.attr("trigger");
+            String language = trigger.attr("language");
+            String text = trigger.html();
+            ScriptTriggerSupport triggerSupport = new ScriptTriggerSupport();
+            triggerSupport.setContent(text);
+            triggerSupport.setLanguage(language);
+            triggerSupport.setName(name);
+            try {
+                triggerSupport.init();
+            } catch (Exception e) {
+                logger.error(String.format("init trigger (%s.%s) error!", name, language), e);
+                continue;
+            }
+            tableMetaData.on(triggerSupport);
+        }
+
         return tableMetaData;
     }
+
 }

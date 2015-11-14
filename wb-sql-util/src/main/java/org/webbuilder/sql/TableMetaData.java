@@ -1,10 +1,14 @@
 package org.webbuilder.sql;
 
+import org.webbuilder.sql.exception.TriggerException;
 import org.webbuilder.sql.param.ExecuteCondition;
 import org.webbuilder.sql.render.template.SqlTemplate;
+import org.webbuilder.sql.trigger.Trigger;
+import org.webbuilder.sql.trigger.TriggerResult;
 import org.webbuilder.utils.base.StringUtil;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by 浩 on 2015-11-06 0006.
@@ -21,12 +25,34 @@ public class TableMetaData {
 
     private Map<String, Correlation> correlations = new LinkedHashMap<>();
 
+    private Map<String, Trigger> triggerBase = new ConcurrentHashMap<>();
+
+    public TableMetaData on(Trigger trigger) {
+        triggerBase.put(trigger.getName(), trigger);
+        return this;
+    }
+
+    public boolean triggerSupport(String name) {
+        return triggerBase.containsKey(name);
+    }
+
+    public TriggerResult on(String name) throws TriggerException {
+        return this.on(name, new HashMap<String, Object>());
+    }
+
+    public TriggerResult on(String name, Map<String, Object> root) throws TriggerException {
+        Trigger trigger = triggerBase.get(name);
+        if (trigger == null) {
+            throw new TriggerException(String.format("trigger %s not found!", name));
+        }
+        return trigger.execute(root);
+    }
+
     private DataBaseMetaData dataBaseMetaData;
 
     public TableMetaData getCorrelationTable(String name) {
         return dataBaseMetaData.getTableMetaData(name);
     }
-
 
     public FieldMetaData addField(FieldMetaData fieldMetaData) {
         fieldMetaDatas.put(fieldMetaData.getName(), fieldMetaData);

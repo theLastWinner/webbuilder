@@ -1,8 +1,95 @@
-
 <correlation target="area">
     <condition filed="area_id" value="area.id" sql="true"></condition>
 </correlation>
 
-<input name="id" field-meta java-type="string" data-type="varchar2(256)" primary-key="true"/>
-<input name="username" field-meta java-type="string" data-type="varchar2(256)"/>
+<input name="id" field-meta java-type="string" data-type="varchar2(256)"
+       validator="min(8)" validator-msg="id长度不低于8" primary-key="true"/>
+<input name="username" field-meta java-type="string" can-update="false" data-type="varchar2(256)"/>
 <input name="area_id" field-meta java-type="int" data-type="number(32,0)"/>
+
+<!--
+    //定义触发器，这些触发器将在服务器上执行，而不是在客户端
+    //触发器语言目前支持 js,groovy,以及表达式语言，orgl和spel
+-->
+
+<!--查询前触发
+<script trigger="select.before" language="js">
+    var user = param.get("user");
+    //添加条件
+    if(user!=null){
+        param.where({area_id:user.get('area_id')});
+    }else{
+        param.where({area_id:'-1'});
+    }
+    function test(){
+        return "我是javascript";
+    }
+    println(test());
+    return true;
+</script>
+-->
+<script trigger="select.before" language="groovy">
+    def user = param.get("user");
+    //添加条件
+    if(user!=null)
+        param.where([area_id:user.get('area_id')]);
+    else
+        param.where([area_id:-1]);
+    println test();
+    return true;
+</script>
+
+<script trigger="insert.before" language="groovy">
+    println param.data;
+    return true;
+
+
+</script>
+
+<script trigger="select.wrapper.instance" language="js">
+    return new HashMap();
+
+
+</script>
+
+<script>
+    runTest(initStep(), {});
+    //初始化执行step
+    function initStep() {
+        //表格里的数据
+        var dataList = [{rowId: "1", url: "http://****"}, {rowId: "2", url: "......"}];
+        var step = null;
+        for (var i = 0; i < dataList.length; i++) {
+            var data = dataList[i];
+            var tmp = data;
+            tmp.callback = function (data) {
+                //data 为运行结果，将他填充到表格即可
+                //如  grid.getRow(data.rowId).update(data);
+            }
+            //第一步
+            if (step == null)
+                step = tmp;
+            else
+                putNextStep(step, tmp);
+        }
+        return step;
+    }
+
+    function putNextStep(step, next) {
+        if (step.nextStep) {//已存在进入下一层
+            putNextStep(step.nextStep, next);
+        } else {
+            step.nextStep = next;
+        }
+    }
+
+    function runTest(step, param) {
+        //执行ajax操作
+        doAjax(step.url, param, function (data) {
+            step.callback(data);
+            if (step.nextStep) {//有下一步则继续执行下一步
+                runTest(step.nextStep, data);
+            }
+        });
+    }
+</script>

@@ -45,6 +45,10 @@ public class InsertTemplateRender implements SqlTemplate {
         return TYPE.INSERT;
     }
 
+    @Override
+    public TableMetaData getTableMetaData() {
+        return tableMetaData;
+    }
 
     @Override
     public SQL render(SqlRenderConfig config) {

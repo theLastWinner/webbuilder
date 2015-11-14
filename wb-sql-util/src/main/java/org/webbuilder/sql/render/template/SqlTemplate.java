@@ -1,6 +1,7 @@
 package org.webbuilder.sql.render.template;
 
 import org.webbuilder.sql.SQL;
+import org.webbuilder.sql.TableMetaData;
 import org.webbuilder.sql.exception.SqlRenderException;
 import org.webbuilder.sql.param.SqlRenderConfig;
 
@@ -9,6 +10,9 @@ import org.webbuilder.sql.param.SqlRenderConfig;
  * Created by 浩 on 2015-11-06 0006.
  */
 public interface SqlTemplate {
+
+    TableMetaData getTableMetaData();
+
     String getTemplate();
 
     TYPE getType();
@@ -18,6 +22,6 @@ public interface SqlTemplate {
     void reload() throws SqlRenderException;
 
     enum TYPE {
-        CREATE, ALTER,INSERT, SELECT, UPDATE, DELETE
+        CREATE, ALTER, INSERT, SELECT, UPDATE, DELETE
     }
 }

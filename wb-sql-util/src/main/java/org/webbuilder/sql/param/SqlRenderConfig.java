@@ -21,7 +21,6 @@ public class SqlRenderConfig {
         config.setConditions(this.getConditions());
     }
 
-
     public SqlRenderConfig addCondition(ExecuteCondition condition, ExecuteCondition... conditions) {
         this.conditions.add(condition);
         this.conditions.addAll(Arrays.asList(conditions));
@@ -59,6 +58,10 @@ public class SqlRenderConfig {
 
     public Object getProperty(String key) {
         return properties.get(key);
+    }
+
+    public Object get(String key) {
+        return this.getProperty(key);
     }
 
     public SqlRenderConfig exclude(String field, String... fields) {

@@ -7,12 +7,18 @@ import org.webbuilder.sql.exception.QueryException;
 import org.webbuilder.sql.exception.UpdateException;
 import org.webbuilder.sql.render.template.SqlTemplate;
 import org.webbuilder.sql.render.template.SqlTemplateRender;
+import org.webbuilder.sql.support.executor.HashMapWrapper;
+import org.webbuilder.sql.support.executor.ObjectWrapper;
+import org.webbuilder.sql.support.executor.ScriptObjectWrapper;
 import org.webbuilder.sql.support.executor.SqlExecutor;
+
+import java.util.Map;
 
 /**
  * Created by 浩 on 2015-11-09 0009.
  */
 public class CommonTable implements Table {
+    public static ObjectWrapper DEFAULT_WRAPPER = new HashMapWrapper();
 
     private TableMetaData metaData;
 
@@ -35,7 +41,13 @@ public class CommonTable implements Table {
     @Override
     public Query createQuery() throws QueryException {
         SqlTemplate template = metaData.getTemplate(SqlTemplate.TYPE.SELECT);
-        Query query = new CommonQuery(template, sqlExecutor);
+        CommonQuery query = new CommonQuery(template, sqlExecutor);
+        //尝试注册脚本对象包装器
+        if (metaData.triggerSupport(Constant.TRIGGER_SELECT_WRAPPER)) {
+            ScriptObjectWrapper wrapper = new ScriptObjectWrapper(metaData, DEFAULT_WRAPPER);
+            query.setObjectWrapper(wrapper);
+        }
+
         return query;
     }
 

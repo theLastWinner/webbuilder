@@ -22,7 +22,6 @@ import org.webbuilder.utils.base.Resources;
 import org.webbuilder.utils.base.file.FileUtil;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,9 +36,9 @@ public class SQLTest {
 
     public SQLTest() {
         try {
-             Class.forName("oracle.jdbc.driver.OracleDriver");
-            connection = DriverManager.getConnection("jdbc:oracle:thin:@server.142:1521:ORCL", "cqcy", "cqcy");
-             connection.setAutoCommit(false);
+            // Class.forName("oracle.jdbc.driver.OracleDriver");
+           // connection = DriverManager.getConnection("jdbc:oracle:thin:@server.142:1521:ORCL", "cqcy", "cqcy");
+           //  connection.setAutoCommit(false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -155,9 +154,16 @@ public class SQLTest {
                 "\"username$LIKE\":{\"value\":\"w\",\"nest\":{\"area.id\":{\"type\":\"or\",\"value\":2}} }}";
 
         param.select("id", "username", "area.name").where(where).orderBy("id").noPaging();
+//        param.addProperty("user",new HashMap<String,Object>(){
+//            {
+//                put("area_id",111);
+//            }
+//        });
+
         System.out.println(query.list(param));
         //进行分页
         param.doPaging(0, 5);
+
         System.out.println(query.list(param));
         System.out.println(query.single(param));//单个值
         System.out.println(query.total(param));//查询总和

@@ -83,7 +83,6 @@ public class QueryParam extends SqlRenderConfig {
         this.pageSize = pageSize;
     }
 
-
     public QueryParam noPaging() {
         setPaging(false);
         return this;
@@ -103,12 +102,12 @@ public class QueryParam extends SqlRenderConfig {
     }
 
     public QueryParam where(String conditionJson) {
-        this.setConditions(ExecuteConditionParser.parseByJson(conditionJson));
+        this.getConditions().addAll(ExecuteConditionParser.parseByJson(conditionJson));
         return this;
     }
 
     public QueryParam where(Map<String, Object> conditionMap) {
-        this.setConditions(ExecuteConditionParser.parseByMap(conditionMap));
+        this.getConditions().addAll(ExecuteConditionParser.parseByMap(conditionMap));
         return this;
     }
 }
