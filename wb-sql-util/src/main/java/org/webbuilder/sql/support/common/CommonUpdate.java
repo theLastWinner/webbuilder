@@ -32,12 +32,14 @@ public class CommonUpdate extends TriggerExecutor implements Update {
         Map<String, Object> root = new HashMap<>();
         root.put("param", param);
         //尝试执行触发器
-        tryExecuteTrigger(Constant.TRIGGER_UPDATE_BEFORE, root);
+        if (!isSkipTrigger(param))
+            tryExecuteTrigger(Constant.TRIGGER_UPDATE_BEFORE, root);
         SQL sql = sqlTemplate.render(param);
         int i = sqlExecutor.update(sql);
         root.put("length", i);
         //尝试执行触发器
-        tryExecuteTrigger(Constant.TRIGGER_UPDATE_DONE, root);
+        if (!isSkipTrigger(param))
+            tryExecuteTrigger(Constant.TRIGGER_UPDATE_DONE, root);
         return i;
     }
 

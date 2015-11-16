@@ -21,4 +21,8 @@ public class SetField extends IncludeField {
         this.value = value;
     }
 
+    @Override
+    public String getFullField() {
+        return getField();
+    }
 }

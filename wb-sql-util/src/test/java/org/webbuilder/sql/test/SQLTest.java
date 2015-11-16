@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.webbuilder.sql.*;
 import org.webbuilder.sql.keywords.KeywordsMapper;
 import org.webbuilder.sql.keywords.dialect.oracle.OracleKeywordsMapper;
-import org.webbuilder.sql.param.ExecuteCondition;
 import org.webbuilder.sql.param.MethodField;
 import org.webbuilder.sql.param.delete.DeleteParam;
 import org.webbuilder.sql.param.insert.InsertParam;
@@ -22,6 +21,7 @@ import org.webbuilder.utils.base.Resources;
 import org.webbuilder.utils.base.file.FileUtil;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,9 +36,9 @@ public class SQLTest {
 
     public SQLTest() {
         try {
-            // Class.forName("oracle.jdbc.driver.OracleDriver");
-           // connection = DriverManager.getConnection("jdbc:oracle:thin:@server.142:1521:ORCL", "cqcy", "cqcy");
-           //  connection.setAutoCommit(false);
+            Class.forName("oracle.jdbc.driver.OracleDriver");
+            connection = DriverManager.getConnection("jdbc:oracle:thin:@server.142:1521:ORCL", "cqcy", "cqcy");
+            connection.setAutoCommit(false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,14 +117,13 @@ public class SQLTest {
     @Test
     public void testInsert() throws Exception {
         Table table = dataBase.getTable("s_user");
-        //创建插入
-        Insert update = table.createInsert();
+        Insert insert = table.createInsert();
         InsertParam param = new InsertParam();
         Map<String, Object> data = new HashMap<>();
         data.put("username", "admin");
         data.put("id", "aaa");
-        param.insert(data);
-        System.out.println(update.insert(param));
+        param.values(data);
+        System.out.println(insert.insert(param));
     }
 
 
@@ -135,13 +134,9 @@ public class SQLTest {
         Update update = table.createUpdate();
         //-----------------更新条件-------------
         UpdateParam param = new UpdateParam();
-        String where = "{\"username\":\"admin\"}";
-        Map<String, Object> data = new HashMap<>();
-        data.put("username", "admin");
-        param.set(data).where(where);
-        System.out.println(update.update(param));
+        param.set("username", "admin").where("username", "admin");
+        update.update(param);
     }
-
 
     @Test
     public void testSelect() throws Exception {
@@ -163,10 +158,9 @@ public class SQLTest {
         System.out.println(query.list(param));
         //进行分页
         param.doPaging(0, 5);
-
         System.out.println(query.list(param));
         System.out.println(query.single(param));//单个值
-        System.out.println(query.total(param));//查询总和
+        System.out.println(query.total(param));//查询总数
         //------------------自定义函数查询--------------
         param = new QueryParam(false);
         param.include(new MethodField().count("id").as("total"));
@@ -181,8 +175,7 @@ public class SQLTest {
         Delete delete = table.createDelete();
         //-----------------条件-------------
         DeleteParam param = new DeleteParam();
-        String where = "{\"id\":\"555555\"}";
-        param.where(where);
-        System.out.println(delete.delete(param));
+        param.where("id$NOT", 1);
+        delete.delete(param);
     }
 }

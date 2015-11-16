@@ -36,7 +36,7 @@ public class CommonTableMetaDataParser implements TableMetaDataParser {
 
     @Override
     public TableMetaData parse(String content, String type) throws Exception {
-        if (type.toLowerCase().equals("html")) {
+        if (type.equalsIgnoreCase("html")) {
             return parseHTML(content);
         }
         return null;

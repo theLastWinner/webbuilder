@@ -5,10 +5,12 @@ import org.webbuilder.sql.exception.InsertException;
 import org.webbuilder.sql.exception.QueryException;
 import org.webbuilder.sql.exception.UpdateException;
 
+import java.io.Serializable;
+
 /**
  * Created by 浩 on 2015-11-06 0006.
  */
-public interface Table {
+public interface Table extends Serializable {
 
     /**
      * 获取表元数据

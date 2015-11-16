@@ -5,22 +5,44 @@ import org.webbuilder.utils.base.StringUtil;
 import java.io.Serializable;
 
 /**
+ * 关联字段，在select，update，insert时，用于指定进行操作的列。
  * Created by 浩 on 2015-11-07 0007.
  */
 public class IncludeField implements Serializable {
 
+    /**
+     * 主表
+     */
     private String mainTable;
 
+    /**
+     * 字段
+     */
     private String field;
 
+    /**
+     * 目标表
+     */
     private String targetTable;
 
+    /**
+     * 别名：select时有效
+     */
     private String as;
 
+    /**
+     * 调用函数
+     */
     private String method;
 
+    /**
+     * 是否为其他的表
+     */
     private boolean anotherTable;
 
+    /**
+     * 不进行有效性检测
+     */
     private boolean skipCheck;
 
     public boolean isAnotherTable() {
@@ -102,7 +124,7 @@ public class IncludeField implements Serializable {
         if (isAnotherTable()) {
             builder.append(getTargetTable()).append(".");
         }
-        builder.append(field);
+        builder.append(getFullField());
         if (as != null) builder.append(" as ").append(as);
         return builder.toString();
     }
@@ -121,6 +143,8 @@ public class IncludeField implements Serializable {
         if (isAnotherTable()) {
             return StringUtil.concat(targetTable, ".", field);
         } else {
+            if (mainTable == null)
+                return field;
             return StringUtil.concat(mainTable, ".", field);
         }
     }

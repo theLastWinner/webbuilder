@@ -14,6 +14,14 @@ public class SqlRenderConfig {
 
     private Set<String> excludes = new LinkedHashSet<>();
 
+    public SqlRenderConfig() {
+
+    }
+
+    public SqlRenderConfig(SqlRenderConfig sqlRenderConfig) {
+        sqlRenderConfig.copy(this);
+    }
+
     public void copy(SqlRenderConfig config) {
         config.setExcludes(this.getExcludes());
         config.setIncludes(this.getIncludes());

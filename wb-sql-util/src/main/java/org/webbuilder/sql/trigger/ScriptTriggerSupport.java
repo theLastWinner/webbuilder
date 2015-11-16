@@ -54,7 +54,7 @@ public class ScriptTriggerSupport implements Trigger, Serializable {
                     triggerResult.setMessage(res.toString());
                 } else if (res instanceof Map) {
                     Map<String, Object> res_map = ((Map) res);
-                    triggerResult.setSuccess("true".equals(String.valueOf(res_map.get("success"))));
+                    triggerResult.setSuccess(!"false".equals(String.valueOf(res_map.get("success"))));
                     triggerResult.setMessage(String.valueOf(res_map.get("message")));
                     triggerResult.setData(res_map.get("data"));
                 } else if (res instanceof TriggerResult) {

@@ -67,7 +67,7 @@ public abstract class AbstractJdbcSqlExecutor implements SqlExecutor {
     @Override
     public <T> List<T> list(SQL sql, ObjectWrapper<T> wrapper) throws Exception {
         SQLInfo info = compileSql(sql);
-        logSql(info);
+        printSql(info);
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(info.getSql());
         //预编译参数
@@ -97,7 +97,7 @@ public abstract class AbstractJdbcSqlExecutor implements SqlExecutor {
     @Override
     public <T> T single(SQL sql, ObjectWrapper<T> wrapper) throws Exception {
         SQLInfo info = compileSql(sql);
-        logSql(info);
+        printSql(info);
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(info.getSql());
         //预编译参数
@@ -126,7 +126,7 @@ public abstract class AbstractJdbcSqlExecutor implements SqlExecutor {
     @Override
     public void exec(SQL sql) throws Exception {
         SQLInfo info = compileSql(sql);
-        logSql(info);
+        printSql(info);
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(info.getSql());
         //预编译参数
@@ -143,7 +143,7 @@ public abstract class AbstractJdbcSqlExecutor implements SqlExecutor {
     @Override
     public int update(SQL sql) throws Exception {
         SQLInfo info = compileSql(sql);
-        logSql(info);
+        printSql(info);
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(info.getSql());
         this.preparedParam(statement, info);
@@ -157,7 +157,7 @@ public abstract class AbstractJdbcSqlExecutor implements SqlExecutor {
     @Override
     public int delete(SQL sql) throws Exception {
         SQLInfo info = compileSql(sql);
-        logSql(info);
+        printSql(info);
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(info.getSql());
         this.preparedParam(statement, info);
@@ -168,7 +168,7 @@ public abstract class AbstractJdbcSqlExecutor implements SqlExecutor {
             }
             return i;
         }
-        logger.debug(i + "rows is delete!");
+        logger.debug("{} rows is delete!", i);
         resetConnection(connection);
         return i;
     }
@@ -186,7 +186,7 @@ public abstract class AbstractJdbcSqlExecutor implements SqlExecutor {
      * @param info
      * @throws Exception
      */
-    private void preparedParam(PreparedStatement statement, SQLInfo info) throws Exception {
+    protected void preparedParam(PreparedStatement statement, SQLInfo info) throws Exception {
         int index = 1;
         //预编译参数
         for (Object object : info.getParam()) {
@@ -199,7 +199,7 @@ public abstract class AbstractJdbcSqlExecutor implements SqlExecutor {
         }
     }
 
-    protected void logSql(SQLInfo info) {
+    protected void printSql(SQLInfo info) {
         if (logger.isDebugEnabled()) {
             logger.debug("execute sql :" + info.getSql());
             logger.debug("params :" + info.paramsString());

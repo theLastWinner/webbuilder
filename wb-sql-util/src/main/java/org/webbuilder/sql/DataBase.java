@@ -1,9 +1,11 @@
 package org.webbuilder.sql;
 
+import java.io.Serializable;
+
 /**
  * Created by 浩 on 2015-11-06 0006.
  */
-public interface DataBase {
+public interface DataBase extends Serializable {
 
     DataBaseMetaData getMetaData();
 

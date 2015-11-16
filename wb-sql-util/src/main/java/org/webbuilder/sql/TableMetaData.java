@@ -7,13 +7,14 @@ import org.webbuilder.sql.trigger.Trigger;
 import org.webbuilder.sql.trigger.TriggerResult;
 import org.webbuilder.utils.base.StringUtil;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by 浩 on 2015-11-06 0006.
  */
-public class TableMetaData {
+public class TableMetaData implements Serializable {
 
     private String name;
 
@@ -146,7 +147,7 @@ public class TableMetaData {
         this.comment = comment;
     }
 
-    public static class Correlation {
+    public static class Correlation implements Serializable {
         private String targetTable;
 
         private boolean one2one = true;

@@ -5,6 +5,7 @@ import org.webbuilder.sql.Query;
 import org.webbuilder.sql.SQL;
 import org.webbuilder.sql.TableMetaData;
 import org.webbuilder.sql.param.IncludeField;
+import org.webbuilder.sql.param.SqlRenderConfig;
 import org.webbuilder.sql.param.query.QueryParam;
 import org.webbuilder.sql.render.template.SqlTemplate;
 import org.webbuilder.sql.support.executor.HashMapWrapper;
@@ -31,16 +32,20 @@ public class CommonQuery extends TriggerExecutor implements Query {
         this.sqlExecutor = sqlExecutor;
     }
 
+
     @Override
     public <T> List<T> list(QueryParam param) throws Exception {
         Map<String, Object> root = new LinkedHashMap<>();
         root.put("param", param);
         root.put("method", "list");
-        tryExecuteTrigger(Constant.TRIGGER_SELECT_BEFORE, root);
+        root.put("query", this);
+        if (!isSkipTrigger(param))
+            tryExecuteTrigger(Constant.TRIGGER_SELECT_BEFORE, root);
         SQL sql = sqlTemplate.render(param);
         List<T> data = sqlExecutor.list(sql, getObjectWrapper());
         root.put("data", data);
-        tryExecuteTrigger(Constant.TRIGGER_SELECT_DONE, root, false);
+        if (!isSkipTrigger(param))
+            tryExecuteTrigger(Constant.TRIGGER_SELECT_DONE, root, false);
         return data;
     }
 
@@ -49,22 +54,22 @@ public class CommonQuery extends TriggerExecutor implements Query {
         Map<String, Object> root = new LinkedHashMap<>();
         root.put("param", param);
         root.put("method", "single");
-        tryExecuteTrigger(Constant.TRIGGER_SELECT_BEFORE, root);
+        root.put("query", this);
+        if (!isSkipTrigger(param))
+            tryExecuteTrigger(Constant.TRIGGER_SELECT_BEFORE, root);
         QueryParam tmp = new QueryParam();
         param.copy(tmp);
         tmp.doPaging(0, 1);
-        SQL sql = sqlTemplate.render(param);
+        SQL sql = sqlTemplate.render(tmp);
         T data = (T) sqlExecutor.single(sql, getObjectWrapper());
-        tryExecuteTrigger(Constant.TRIGGER_SELECT_DONE, root, false);
+        root.put("data", data);
+        if (!isSkipTrigger(param))
+            tryExecuteTrigger(Constant.TRIGGER_SELECT_DONE, root, false);
         return data;
     }
 
     @Override
     public int total(QueryParam param) throws Exception {
-        Map<String, Object> root = new LinkedHashMap<>();
-        root.put("param", param);
-        root.put("method", "total");
-        tryExecuteTrigger(Constant.TRIGGER_SELECT_BEFORE, root);
         QueryParam tmp = new QueryParam(false);
         tmp.setConditions(param.getConditions());
         tmp.setProperties(param.getProperties());
@@ -80,8 +85,6 @@ public class CommonQuery extends TriggerExecutor implements Query {
         if (res != null) {
             total = StringUtil.toInt(res.get("total"));
         }
-        root.put("data", total);
-        tryExecuteTrigger(Constant.TRIGGER_SELECT_DONE, root, false);
         return total;
     }
 

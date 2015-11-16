@@ -10,31 +10,49 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * sql执行条件
  * Created by 浩 on 2015-11-06 0006.
  */
 public class ExecuteCondition {
+    //条件类型
     //or || and
     private String appendType = "and";
 
+    //是否为sql语句，而不采用预编译
     private boolean sql = false;
 
+    //表
     private String table;
+
     //字段
     private String field;
-
+    //查询类型，如GT,LT,LIKE，IN等等
     private QueryType queryType = QueryType.EQ;
 
-    //string 或者 ExecuteCondition
-    //
+    //值
     private Object value;
 
+    //表的元信息
     private TableMetaData tableMetaData;
+
+    private int hashCode = 0;
+
+
+    /**
+     * 组合查询条件
+     */
+    private Set<ExecuteCondition> nest = new LinkedHashSet<>();
 
     public ExecuteCondition() {
     }
 
     public ExecuteCondition(String field) {
         setField(field);
+    }
+
+    public ExecuteCondition(String field, Object value) {
+        setField(field);
+        setValue(value);
     }
 
     public TableMetaData getTableMetaData() {
@@ -56,11 +74,6 @@ public class ExecuteCondition {
     public void setAppendType(String appendType) {
         this.appendType = appendType;
     }
-
-    /**
-     * 组合查询
-     */
-    private Set<ExecuteCondition> nest = new LinkedHashSet<>();
 
     public Set<ExecuteCondition> getNest() {
         return nest;
@@ -130,9 +143,21 @@ public class ExecuteCondition {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        if (hashCode == 0)
+            hashCode = toString().hashCode();
+        return hashCode;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(getAppendType()).append(" ").append(getFullField()).append(" ").append(queryType);
+        builder.append(getAppendType()).append(" ").append(getField()).append(" ").append(queryType);
         builder.append(" ->").append(nest);
         return builder.toString();
     }

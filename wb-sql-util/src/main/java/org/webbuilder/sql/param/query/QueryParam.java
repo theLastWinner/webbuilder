@@ -3,10 +3,7 @@ package org.webbuilder.sql.param.query;
 import org.webbuilder.sql.param.SqlRenderConfig;
 import org.webbuilder.sql.parser.ExecuteConditionParser;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by 浩 on 2015-11-06 0006.
@@ -19,7 +16,16 @@ public class QueryParam extends SqlRenderConfig {
 
     private int pageSize = 50;
 
+    public QueryParam skipTrigger() {
+        this.addProperty("skipTrigger", true);
+        return this;
+    }
+
     public QueryParam() {
+    }
+
+    public QueryParam(SqlRenderConfig sqlRenderConfig) {
+        super(sqlRenderConfig);
     }
 
     public QueryParam groupBy(String field) {
@@ -105,6 +111,14 @@ public class QueryParam extends SqlRenderConfig {
         this.getConditions().addAll(ExecuteConditionParser.parseByJson(conditionJson));
         return this;
     }
+
+    public QueryParam where(String key, Object value) {
+        Map<String, Object> hashMap = new HashMap<>();
+        hashMap.put(key, value);
+        where(hashMap);
+        return this;
+    }
+
 
     public QueryParam where(Map<String, Object> conditionMap) {
         this.getConditions().addAll(ExecuteConditionParser.parseByMap(conditionMap));

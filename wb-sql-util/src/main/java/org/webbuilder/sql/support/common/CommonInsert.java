@@ -28,10 +28,12 @@ public class CommonInsert extends TriggerExecutor implements Insert {
         Map<String, Object> root = new HashMap<>();
         root.put("param", param);
         //尝试执行触发器
-        tryExecuteTrigger(Constant.TRIGGER_INSERT_BEFORE, root);
+        if (!isSkipTrigger(param))
+            tryExecuteTrigger(Constant.TRIGGER_INSERT_BEFORE, root);
         SQL sql = sqlTemplate.render(param);
         sqlExecutor.insert(sql);
-        tryExecuteTrigger(Constant.TRIGGER_INSERT_DONE, root);
+        if (!isSkipTrigger(param))
+            tryExecuteTrigger(Constant.TRIGGER_INSERT_DONE, root);
         return true;
     }
 
