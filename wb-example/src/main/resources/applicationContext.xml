@@ -20,4 +20,7 @@
 
     <!--工作流支持-->
     <import resource="classpath:config/bpm/**/spring-activiti.xml"></import>
+
+    <!--导入动态表单配置-->
+    <import resource="classpath:config/custom/customFormContext.xml"></import>
 </beans>

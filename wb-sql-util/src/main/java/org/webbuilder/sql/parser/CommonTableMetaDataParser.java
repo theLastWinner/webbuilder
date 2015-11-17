@@ -45,6 +45,11 @@ public class CommonTableMetaDataParser implements TableMetaDataParser {
     protected TableMetaData parseHTML(String content) throws Exception {
         TableMetaData tableMetaData = new TableMetaData();
         Document document = Jsoup.parse(content);
+        Elements t_name = document.getElementsByTag("table-name");
+        if (t_name.size() > 0) {
+            tableMetaData.setName(t_name.get(0).attr("value"));
+        }
+
         Elements elements = document.getElementsByAttribute("field-meta");
         for (Element element : elements) {
             FieldMetaData fieldMetaData = new FieldMetaData();

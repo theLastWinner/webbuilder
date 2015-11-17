@@ -50,6 +50,20 @@ public class SqlRenderConfig {
         return this;
     }
 
+    public SqlRenderConfig include(Collection<String> fields) {
+        for (String field : fields) {
+            include(field);
+        }
+        return this;
+    }
+
+    public SqlRenderConfig exclude(Collection<String> fields) {
+        for (String field : fields) {
+            exclude(field);
+        }
+        return this;
+    }
+
     public SqlRenderConfig include(String field, String... fields) {
         includes.add(new IncludeField(field));
         for (int i = 0; i < fields.length; i++) {

@@ -26,6 +26,7 @@ public abstract class DataBaseMetaData {
     }
 
     public TableMetaData addTable(TableMetaData tableMetaData) {
+        tableMetaData.setDataBaseMetaData(this);
         tables.put(tableMetaData.getName(), tableMetaData);
         return tableMetaData;
     }
