@@ -73,7 +73,7 @@
     import org.webbuilder.sql.param.query.QueryParam;
 
     //查询哪些数据将被删除,不执行触发器
-    def q_param = new QueryParam(param).skipTrigger();
+    def q_param = new QueryParam(param);
     def data = table.createQuery().list(q_param);
      if(data.size()==0){
         return [success:false,message:"没有数据被删除"];

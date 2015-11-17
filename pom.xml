@@ -16,6 +16,8 @@
         <module>wb-example</module>
         <module>wb-search</module>
         <module>wb-code-generator</module>
+        <module>wb-crawler</module>
+        <module>wb-sql-util</module>
     </modules>
 
     <build>

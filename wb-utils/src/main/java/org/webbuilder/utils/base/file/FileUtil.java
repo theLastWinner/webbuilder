@@ -160,7 +160,7 @@ public class FileUtil {
      * @param deep     是否读取子目录
      * @param callBack 读取回调
      */
-    public synchronized static void readFile(String path, boolean deep, CallBack callBack) {
+    public static void readFile(String path, boolean deep, CallBack callBack) {
         File file = new File(path);
         try {
             // 调用回调

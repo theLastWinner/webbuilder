@@ -12,6 +12,7 @@
     <artifactId>example</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
+
     <build>
         <plugins>
             <plugin>
@@ -42,6 +43,7 @@
                     <server>tomcat</server>
                     <path>/wb-example</path>
                     <aliases>wb-example</aliases>
+                    <uriEncoding>utf-8</uriEncoding>
                 </configuration>
             </plugin>
         </plugins>
