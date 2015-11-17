@@ -18,4 +18,7 @@
     <import resource="classpath:config/dataSource/dataSource-*.xml"></import>
     <!-- 多项目自动关联-->
     <import resource="classpath:config/spring/applicationContext-*.xml"></import>
+
+    <!--导入动态表单配置-->
+    <import resource="classpath:config/custom/customFormContext.xml"></import>
 </beans>

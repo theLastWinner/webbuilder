@@ -9,7 +9,7 @@
             <foreach item="item" index="index" collection="$fields">
                 <if test="#this[item]!=null">
                     <choose>
-                        <when test="$fieldsInfo[item] == 'date' ">
+                        <when test="$fieldsType[item] == 'date' ">
                             AND ${$tableName}.${item}=to_date(#{${item}},'YYYY-MM-DD HH24:MI:SS')
                         </when>
                         <otherwise>AND ${$tableName}.${item}=#{${item}}</otherwise>
@@ -17,7 +17,7 @@
                 </if>
                 <if test="#this[item+'$NOT']!=null">
                     <choose>
-                        <when test="$fieldsInfo[item] == 'date' ">
+                        <when test="$fieldsType[item] == 'date' ">
                             AND ${$tableName}.${item}!=to_date(#{${item+'$NOT'}},'YYYY-MM-DD HH24:MI:SS')
                         </when>
                         <otherwise>AND ${$tableName}.${item}!=#{${item+'$NOT'}}</otherwise>
@@ -55,10 +55,10 @@
                 </if>
                 <if test="#this[item+'$GT']!=null">
                     <choose>
-                        <when test="$fieldsInfo[item] == 'date' ">
+                        <when test="$fieldsType[item] == 'date' ">
                             AND ${$tableName}.${item} &gt;=to_date(#{${item+'$GT'}},'YYYY-MM-DD HH24:MI:SS')
                         </when>
-                        <when test="$fieldsInfo[item] == 'number' ">
+                        <when test="$fieldsType[item] == 'number' ">
                             AND ${$tableName}.${item} &gt;=#{${item+'$GT'}}
                         </when>
                         <otherwise></otherwise>
@@ -66,10 +66,10 @@
                 </if>
                 <if test="#this[item+'$LT']!=null">
                     <choose>
-                        <when test="$fieldsInfo[item] == 'date' ">
+                        <when test="$fieldsType[item] == 'date' ">
                             AND ${$tableName}.${item} &lt;=to_date(#{${item+'$LT'}},'YYYY-MM-DD HH24:MI:SS')
                         </when>
-                        <when test="$fieldsInfo[item] == 'number' ">
+                        <when test="$fieldsType[item] == 'number' ">
                             AND ${$tableName}.${item} &lt;=#{${item+'$LT'}}
                         </when>
                         <otherwise></otherwise>

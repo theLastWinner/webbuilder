@@ -241,6 +241,16 @@ public class PageUtil {
         return params;
     }
 
+    public int pageIndex(int total) {
+        int pageIndex = getPageIndex();
+        // 当前页没有数据后跳转到最后一页
+        if (this.getPageIndex() != 0 && this.getStart() >= total) {
+            int tmp = total / this.getPageSize();
+            pageIndex = total % this.getPageSize() == 0 ? tmp - 1 : tmp;
+        }
+        return pageIndex;
+    }
+
 
     @Override
     public int hashCode() {

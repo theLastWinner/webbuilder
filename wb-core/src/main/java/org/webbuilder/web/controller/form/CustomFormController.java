@@ -1,17 +1,14 @@
 package org.webbuilder.web.controller.form;
 
-import com.alibaba.fastjson.JSON;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.webbuilder.web.core.bean.JsonParam;
 import org.webbuilder.web.core.bean.PageUtil;
 import org.webbuilder.web.core.bean.ResponseData;
 import org.webbuilder.web.core.bean.ResponseMessage;
 import org.webbuilder.web.service.form.CustomFormService;
-import org.webbuilder.web.service.storage.StorageService;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,18 +24,11 @@ public class CustomFormController {
 
     @RequestMapping(value = "/{form_id}", method = RequestMethod.GET, produces = ResponseMessage.CONTENT_TYPE_JSON)
     @ResponseBody
-    public Object list(@PathVariable("form_id") String form_id, PageUtil pageUtil,
-                       @RequestParam(value = "includes", defaultValue = "[]") String includes,
-                       @RequestParam(value = "excludes", defaultValue = "[]") String excludes) {
+    public Object list(@PathVariable("form_id") String form_id, @JsonParam PageUtil pageUtil) {
         // 获取条件查询
         try {
-            pageUtil.getIncludes().addAll(JSON.parseObject(includes, HashSet.class));
-            pageUtil.getExcludes().addAll(JSON.parseObject(excludes, HashSet.class));
-            Map data = customFormService.selectPager(form_id, pageUtil);
-            ResponseData responseData = new ResponseData(data);
-            responseData.excludes(Map.class, "ROWNUM_");
-
-            return responseData;
+            Map<String, Object> data = customFormService.selectPager(form_id, pageUtil);
+            return data;
         } catch (Exception e) {
             return new ResponseMessage(false, e);
         }
@@ -50,7 +40,6 @@ public class CustomFormController {
         try {
             Object data = customFormService.selectByPk(form_id, id);
             ResponseData responseData = new ResponseData(new ResponseMessage(true, data));
-            responseData.excludes(Map.class, "ROWNUM_");
             return responseData;
         } catch (Exception e) {
             return new ResponseMessage(false, e);

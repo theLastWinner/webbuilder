@@ -99,6 +99,12 @@
             <artifactId>utils</artifactId>
             <version>${org.webbuilder.utils.version}</version>
         </dependency>
+        <!-- sql-utils -->
+        <dependency>
+            <groupId>org.webbuilder</groupId>
+            <artifactId>wb-sql-util</artifactId>
+            <version>${org.webbuilder.utils.version}</version>
+        </dependency>
         <!-- junit -->
         <dependency>
             <groupId>junit</groupId>
