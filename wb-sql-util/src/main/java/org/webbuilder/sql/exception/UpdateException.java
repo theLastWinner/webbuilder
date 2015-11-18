@@ -3,7 +3,7 @@ package org.webbuilder.sql.exception;
 /**
  * Created by 浩 on 2015-11-06 0006.
  */
-public class UpdateException extends RuntimeException {
+public class UpdateException extends SqlExeException {
     public UpdateException(String message) {
         super(message);
     }

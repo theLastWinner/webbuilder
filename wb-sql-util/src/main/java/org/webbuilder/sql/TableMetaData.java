@@ -22,6 +22,8 @@ public class TableMetaData implements Serializable {
 
     private String comment;
 
+    private String location;
+
     private Map<String, FieldMetaData> fieldMetaDatas = new LinkedHashMap<>();
 
     private Map<String, Correlation> correlations = new LinkedHashMap<>();
@@ -145,6 +147,14 @@ public class TableMetaData implements Serializable {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public static class Correlation implements Serializable {

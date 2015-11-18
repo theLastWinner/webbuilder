@@ -28,6 +28,7 @@ public abstract class DataBaseMetaData {
     public TableMetaData addTable(TableMetaData tableMetaData) {
         tableMetaData.setDataBaseMetaData(this);
         tables.put(tableMetaData.getName(), tableMetaData);
+        getRender().init(tableMetaData);
         return tableMetaData;
     }
 
@@ -49,6 +50,5 @@ public abstract class DataBaseMetaData {
     public TableMetaData getTableMetaData(String tableName) {
         return tables.get(tableName);
     }
-
 
 }

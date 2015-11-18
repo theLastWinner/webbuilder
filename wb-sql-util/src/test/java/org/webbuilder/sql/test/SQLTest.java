@@ -5,17 +5,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.webbuilder.sql.*;
-import org.webbuilder.sql.keywords.KeywordsMapper;
-import org.webbuilder.sql.keywords.dialect.oracle.OracleKeywordsMapper;
 import org.webbuilder.sql.param.MethodField;
 import org.webbuilder.sql.param.delete.DeleteParam;
 import org.webbuilder.sql.param.insert.InsertParam;
 import org.webbuilder.sql.param.query.QueryParam;
 import org.webbuilder.sql.param.update.UpdateParam;
 import org.webbuilder.sql.parser.CommonTableMetaDataParser;
-import org.webbuilder.sql.render.template.SqlTemplateRender;
+import org.webbuilder.sql.support.OracleDataBaseMetaData;
 import org.webbuilder.sql.support.common.CommonDataBase;
-import org.webbuilder.sql.support.common.CommonSqlTemplateRender;
 import org.webbuilder.sql.support.executor.AbstractJdbcSqlExecutor;
 import org.webbuilder.utils.base.Resources;
 import org.webbuilder.utils.base.file.FileUtil;
@@ -58,27 +55,7 @@ public class SQLTest {
     public void init() throws Exception {
 
         //定义数据库
-        DataBaseMetaData dataBaseMetaData = new DataBaseMetaData() {
-            //默认的sql渲染器
-            SqlTemplateRender render = new CommonSqlTemplateRender();
-            //oracle关键字映射器
-            KeywordsMapper mapper = new OracleKeywordsMapper();
-
-            @Override
-            public String getName() {
-                return "orcl";
-            }
-
-            @Override
-            public SqlTemplateRender getRender() {
-                return render;
-            }
-
-            @Override
-            public KeywordsMapper getKeywordsMapper() {
-                return mapper;
-            }
-        };
+        DataBaseMetaData dataBaseMetaData = new OracleDataBaseMetaData();
         dataBase = new CommonDataBase(dataBaseMetaData, new AbstractJdbcSqlExecutor() {
             @Override
             public Connection getConnection() {
@@ -99,9 +76,9 @@ public class SQLTest {
 
         String s_user_content = FileUtil.readFile2String(Resources.getResourceAsFile("tables/s_user.html").getAbsolutePath());
         TableMetaData s_user = new CommonTableMetaDataParser().parse(s_user_content, "html");
-        s_user.setName("s_user");
+        s_user.setName("s_user_02");
         s_user.setDataBaseMetaData(dataBaseMetaData);
-
+        s_user.setComment("测试表");
         //定义表结构
         String area_content = FileUtil.readFile2String(Resources.getResourceAsFile("tables/area.html").getAbsolutePath());
         TableMetaData area = new CommonTableMetaDataParser().parse(area_content, "html");
@@ -116,7 +93,7 @@ public class SQLTest {
 
     @Test
     public void testInsert() throws Exception {
-        Table table = dataBase.getTable("s_user");
+        Table table = dataBase.getTable("s_user_02");
         Insert insert = table.createInsert();
         InsertParam param = new InsertParam();
         Map<String, Object> data = new HashMap<>();
@@ -129,7 +106,7 @@ public class SQLTest {
 
     @Test
     public void testUpdate() throws Exception {
-        Table table = dataBase.getTable("s_user");
+        Table table = dataBase.getTable("s_user_02");
         //创建更新
         Update update = table.createUpdate();
         //-----------------更新条件-------------
@@ -140,7 +117,7 @@ public class SQLTest {
 
     @Test
     public void testSelect() throws Exception {
-        Table table = dataBase.getTable("s_user");
+        Table table = dataBase.getTable("s_user_02");
         //创建查询
         Query query = table.createQuery();
         //-----------------多条件查询条件-------------
@@ -170,12 +147,29 @@ public class SQLTest {
 
     @Test
     public void testDelete() throws Exception {
-        Table table = dataBase.getTable("s_user");
+        Table table = dataBase.getTable("s_user_02");
         //创建删除
         Delete delete = table.createDelete();
         //-----------------条件-------------
         DeleteParam param = new DeleteParam();
         param.where("id$NOT", 1);
         delete.delete(param);
+    }
+
+    @Test
+    public void testCreate() throws Exception {
+        dataBase.createTable(dataBase.getTable("s_user_02").getMetaData());
+    }
+
+    @Test
+    public void testAlter() throws Exception {
+        String s_user_content = FileUtil.readFile2String(Resources.getResourceAsFile("tables/s_user.html").getAbsolutePath());
+        TableMetaData s_user = new CommonTableMetaDataParser().parse(s_user_content, "html");
+        s_user.setName("s_user_02");
+        s_user.setComment("测试表");
+        FieldMetaData metaData = new FieldMetaData("test_f", String.class, "varchar2(256)");
+        metaData.setComment("测试字段");
+        s_user.addField(metaData);
+        dataBase.alterTable(s_user);
     }
 }

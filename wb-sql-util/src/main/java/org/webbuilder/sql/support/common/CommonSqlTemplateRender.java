@@ -21,36 +21,10 @@ public class CommonSqlTemplateRender implements SqlTemplateRender {
 
     protected Map<String, Map<SqlTemplate.TYPE, SqlTemplate>> cache = new ConcurrentHashMap<>();
 
-
     @Override
     public SqlTemplate render(SqlRenderParam param) throws SqlRenderException {
         TableMetaData tableMetaData = param.getTableMetaData();
-        String tableName = tableMetaData.getName();
         SqlTemplate sqlTemplate = getTemplate(tableMetaData.getName(), param.getType());
-        if (sqlTemplate == null) {
-            switch (param.getType()) {
-                case SELECT:
-                    SelectTemplateRender selectTemplateRender = new SelectTemplateRender(tableMetaData);
-                    selectTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
-                    cacheTemplate(tableName, sqlTemplate = selectTemplateRender);
-                    break;
-                case UPDATE:
-                    UpdateTemplateRender updateTemplateRender = new UpdateTemplateRender(tableMetaData);
-                    updateTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
-                    cacheTemplate(tableName, sqlTemplate = updateTemplateRender);
-                    break;
-                case INSERT:
-                    InsertTemplateRender insertTemplateRender = new InsertTemplateRender(tableMetaData);
-                    insertTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
-                    cacheTemplate(tableName, sqlTemplate = insertTemplateRender);
-                    break;
-                case DELETE:
-                    DeleteTemplateRender deleteTemplateRender = new DeleteTemplateRender(tableMetaData);
-                    deleteTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
-                    cacheTemplate(tableName, sqlTemplate = deleteTemplateRender);
-                    break;
-            }
-        }
         return sqlTemplate;
     }
 
@@ -66,7 +40,8 @@ public class CommonSqlTemplateRender implements SqlTemplateRender {
     }
 
 
-    private SqlTemplate cacheTemplate(String tableName, SqlTemplate template) {
+    protected SqlTemplate cacheTemplate(String tableName, SqlTemplate template) {
+        getTemplate(tableName, template.getType());
         Map<SqlTemplate.TYPE, SqlTemplate> templateMap = cache.get(tableName);
         templateMap.put(template.getType(), template);
         template.reload();
@@ -75,6 +50,23 @@ public class CommonSqlTemplateRender implements SqlTemplateRender {
 
     @Override
     public void init(TableMetaData tableMetaData) {
+        String tableName = tableMetaData.getName();
+
+        SelectTemplateRender selectTemplateRender = new SelectTemplateRender(tableMetaData);
+        selectTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
+        cacheTemplate(tableName, selectTemplateRender);
+
+        UpdateTemplateRender updateTemplateRender = new UpdateTemplateRender(tableMetaData);
+        updateTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
+        cacheTemplate(tableName, updateTemplateRender);
+
+        InsertTemplateRender insertTemplateRender = new InsertTemplateRender(tableMetaData);
+        insertTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
+        cacheTemplate(tableName, insertTemplateRender);
+
+        DeleteTemplateRender deleteTemplateRender = new DeleteTemplateRender(tableMetaData);
+        deleteTemplateRender.setKeywordsMapper(tableMetaData.getDataBaseMetaData().getKeywordsMapper());
+        cacheTemplate(tableName, deleteTemplateRender);
 
     }
 }

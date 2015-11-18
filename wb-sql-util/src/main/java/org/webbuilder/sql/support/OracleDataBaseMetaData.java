@@ -1,16 +1,30 @@
 package org.webbuilder.sql.support;
 
 import org.webbuilder.sql.DataBaseMetaData;
+import org.webbuilder.sql.TableMetaData;
+import org.webbuilder.sql.exception.SqlRenderException;
 import org.webbuilder.sql.keywords.KeywordsMapper;
 import org.webbuilder.sql.keywords.dialect.oracle.OracleKeywordsMapper;
+import org.webbuilder.sql.render.template.SqlRenderParam;
+import org.webbuilder.sql.render.template.SqlTemplate;
 import org.webbuilder.sql.render.template.SqlTemplateRender;
 import org.webbuilder.sql.support.common.CommonSqlTemplateRender;
+import org.webbuilder.sql.support.common.oracle.OracleTableAlterRender;
+import org.webbuilder.sql.support.common.oracle.OracleTableCreateRender;
 
 /**
  * Created by 浩 on 2015-11-17 0017.
  */
 public class OracleDataBaseMetaData extends DataBaseMetaData {
-    protected SqlTemplateRender sqlTemplateRender = new CommonSqlTemplateRender();
+    protected SqlTemplateRender sqlTemplateRender = new CommonSqlTemplateRender() {
+        @Override
+        public void init(TableMetaData tableMetaData) {
+            super.init(tableMetaData);
+            cacheTemplate(tableMetaData.getName(), new OracleTableCreateRender(tableMetaData));
+
+            cacheTemplate(tableMetaData.getName(), new OracleTableAlterRender(tableMetaData));
+        }
+    };
     protected KeywordsMapper keywordsMapper = new OracleKeywordsMapper();
     protected String name = "orcl";
 

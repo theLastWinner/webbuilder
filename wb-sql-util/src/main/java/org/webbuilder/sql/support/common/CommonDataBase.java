@@ -1,10 +1,17 @@
 package org.webbuilder.sql.support.common;
 
-import org.webbuilder.sql.DataBase;
-import org.webbuilder.sql.DataBaseMetaData;
-import org.webbuilder.sql.Table;
-import org.webbuilder.sql.TableMetaData;
+import org.webbuilder.sql.*;
+import org.webbuilder.sql.exception.CreateException;
+import org.webbuilder.sql.param.SqlRenderConfig;
+import org.webbuilder.sql.param.alter.AlterParam;
+import org.webbuilder.sql.param.query.QueryParam;
+import org.webbuilder.sql.render.template.SqlRenderParam;
+import org.webbuilder.sql.render.template.SqlTemplate;
+import org.webbuilder.sql.support.executor.HashMapWrapper;
 import org.webbuilder.sql.support.executor.SqlExecutor;
+import org.webbuilder.utils.base.StringUtil;
+
+import java.util.Map;
 
 /**
  * 通用的数据库
@@ -51,7 +58,49 @@ public class CommonDataBase implements DataBase {
     }
 
     @Override
-    public Table createTable(TableMetaData tableMetaData) {
-        return null;
+    public Table createTable(TableMetaData tableMetaData) throws Exception {
+        getMetaData().addTable(tableMetaData);
+        Table table = this.getTable(tableMetaData.getName());
+        Query query = table.createQuery();
+        try {
+            query.total(new QueryParam());
+            throw new CreateException("该表已存在");
+        } catch (CreateException e) {
+            throw e;
+        } catch (Exception e) {
+        }
+        tableMetaData.setDataBaseMetaData(getMetaData());
+        SqlRenderParam param = new SqlRenderParam();
+        param.setType(SqlTemplate.TYPE.CREATE);
+        param.setTableMetaData(tableMetaData);
+        SqlTemplate template = getMetaData().getRender().render(param);
+        SQL sql = template.render(new SqlRenderConfig());
+        sqlExecutor.exec(sql);
+
+        return getTable(tableMetaData.getName());
+    }
+
+    @Override
+    public Table alterTable(TableMetaData tableMetaData) throws Exception {
+        Table table = this.getTable(tableMetaData.getName());
+        AlterParam alterParam = new AlterParam(tableMetaData);
+        Query query = table.createQuery();
+        try {
+            int i = query.total(new QueryParam());
+            if (i == 0) {
+                alterParam.setRemoveField(true);
+            }
+        } catch (Exception e) {
+        }
+        tableMetaData.setDataBaseMetaData(getMetaData());
+        SqlRenderParam param = new SqlRenderParam();
+        param.setType(SqlTemplate.TYPE.ALTER);
+        //old
+        param.setTableMetaData(getMetaData().getTableMetaData(tableMetaData.getName()));
+        SqlTemplate template = getMetaData().getRender().render(param);
+        SQL sql = template.render(alterParam);
+        sqlExecutor.exec(sql);
+        getMetaData().addTable(tableMetaData);
+        return getTable(tableMetaData.getName());
     }
 }

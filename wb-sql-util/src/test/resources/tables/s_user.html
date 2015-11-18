@@ -4,8 +4,8 @@
 
 <input name="id" field-meta java-type="string" data-type="varchar2(256)"
        validator="min(8)" validator-msg="id长度不低于8" can-update="false" primary-key="true"/>
-<input name="username" field-meta java-type="string" can-update="true" data-type="varchar2(256)"/>
-<input name="area_id" field-meta java-type="int" can-update="true" data-type="number(32,0)"/>
+<input name="username" field-meta  remark="用户名" java-type="string" can-update="true" not-null="true" data-type="varchar2(256)"/>
+<input name="area_id" field-meta   remark="地区主键" java-type="int" can-update="true" data-type="number(32,0)"/>
 
 <!--
     //定义触发器，这些触发器将在服务器上执行，而不是在客户端

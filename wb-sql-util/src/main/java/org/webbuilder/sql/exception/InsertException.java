@@ -3,7 +3,7 @@ package org.webbuilder.sql.exception;
 /**
  * Created by 浩 on 2015-11-12 0012.
  */
-public class InsertException extends RuntimeException {
+public class InsertException extends SqlExeException {
     public InsertException(String message) {
         super(message);
     }

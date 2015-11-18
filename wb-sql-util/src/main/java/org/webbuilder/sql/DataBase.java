@@ -11,7 +11,8 @@ public interface DataBase extends Serializable {
 
     Table getTable(String name);
 
-    Table createTable(TableMetaData tableMetaData);
+    Table createTable(TableMetaData tableMetaData) throws Exception;
 
+    Table alterTable(TableMetaData tableMetaData) throws Exception;
 
 }

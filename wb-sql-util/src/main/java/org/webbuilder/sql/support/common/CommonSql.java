@@ -4,8 +4,7 @@ import org.webbuilder.sql.BindSQL;
 import org.webbuilder.sql.SQL;
 import org.webbuilder.sql.TableMetaData;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by 浩 on 2015-11-07 0007.
@@ -18,6 +17,18 @@ public class CommonSql implements SQL {
     private List<BindSQL> bindSQLs;
 
     private TableMetaData tableMetaData;
+
+    public CommonSql() {
+    }
+
+    public CommonSql(String sql) {
+        this.sql = sql;
+    }
+
+    public CommonSql(String sql, Map<String, Object> params) {
+        this.sql = sql;
+        this.params = params;
+    }
 
     public void setTableMetaData(TableMetaData tableMetaData) {
         this.tableMetaData = tableMetaData;
@@ -35,11 +46,15 @@ public class CommonSql implements SQL {
 
     @Override
     public Map<String, Object> getParams() {
+        if (params == null)
+            return new HashMap<>();
         return this.params;
     }
 
     @Override
     public List<BindSQL> getBinds() {
+        if (bindSQLs == null)
+            bindSQLs = new LinkedList<>();
         return this.bindSQLs;
     }
 
@@ -63,10 +78,21 @@ public class CommonSql implements SQL {
     }
 
     public List<BindSQL> getBindSQLs() {
+        if (bindSQLs == null)
+            bindSQLs = new ArrayList<>();
         return bindSQLs;
     }
 
     public void setBindSQLs(List<BindSQL> bindSQLs) {
         this.bindSQLs = bindSQLs;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder(this.getSql()).append(";\n");
+        for (BindSQL bindSQL : getBinds()) {
+            builder.append(bindSQL.getSql());
+        }
+        return builder.toString();
     }
 }
