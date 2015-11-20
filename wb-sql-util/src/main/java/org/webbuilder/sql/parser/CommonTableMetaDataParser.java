@@ -1,6 +1,7 @@
 package org.webbuilder.sql.parser;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -45,10 +46,21 @@ public class CommonTableMetaDataParser implements TableMetaDataParser {
     protected TableMetaData parseHTML(String content) throws Exception {
         TableMetaData tableMetaData = new TableMetaData();
         Document document = Jsoup.parse(content);
-        Elements t_name = document.getElementsByTag("table-name");
+        Elements t_name = document.getElementsByTag("table-meta");
         if (t_name.size() > 0) {
-            tableMetaData.setName(t_name.get(0).attr("value"));
+            tableMetaData.setName(t_name.get(0).attr("name"));
+            tableMetaData.setComment(t_name.get(0).attr("remark"));
+            tableMetaData.setReadOnly("true".equals(t_name.get(0).attr("read-only")));
+            Elements attrs = t_name.get(0).getElementsByTag("attr");
+            for (Element attr : attrs) {
+                for (Attribute attribute : attr.attributes().asList()) {
+                    tableMetaData.attr(attribute.getKey(),attribute.getValue());
+                }
+            }
         }
+        //加载自定义属性
+        //
+        Elements attrs;
 
         Elements elements = document.getElementsByAttribute("field-meta");
         for (Element element : elements) {
@@ -78,6 +90,12 @@ public class CommonTableMetaDataParser implements TableMetaDataParser {
             fieldMetaData.setValidator(validator);
             fieldMetaData.setDataType(dataType);
             fieldMetaData.setComment(remark);
+            attrs = element.getElementsByTag("attr");
+            for (Element attr : attrs) {
+                for (Attribute attribute : attr.attributes().asList()) {
+                    tableMetaData.attr(attribute.getKey(),attribute.getValue());
+                }
+            }
             tableMetaData.addField(fieldMetaData);
         }
 
